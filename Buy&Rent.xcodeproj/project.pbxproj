@@ -13,6 +13,11 @@
 		ED453D1424640F7500F8BA32 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED453D1324640F7500F8BA32 /* Assets.xcassets */; };
 		ED453D1724640F7600F8BA32 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED453D1624640F7600F8BA32 /* Preview Assets.xcassets */; };
 		ED453D1A24640F7600F8BA32 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ED453D1824640F7600F8BA32 /* LaunchScreen.storyboard */; };
+		ED453D232464113700F8BA32 /* FormModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D222464113700F8BA32 /* FormModel.swift */; };
+		ED453D252464512F00F8BA32 /* BuyExpenses.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D242464512F00F8BA32 /* BuyExpenses.swift */; };
+		ED453D272464542100F8BA32 /* MortageExpenses.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D262464542100F8BA32 /* MortageExpenses.swift */; };
+		ED453D292464587700F8BA32 /* PeriodicExpenses.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D282464587700F8BA32 /* PeriodicExpenses.swift */; };
+		ED453D2B2464594500F8BA32 /* TaxesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D2A2464594500F8BA32 /* TaxesView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +29,11 @@
 		ED453D1624640F7600F8BA32 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		ED453D1924640F7600F8BA32 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ED453D1B24640F7600F8BA32 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ED453D222464113700F8BA32 /* FormModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormModel.swift; sourceTree = "<group>"; };
+		ED453D242464512F00F8BA32 /* BuyExpenses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyExpenses.swift; sourceTree = "<group>"; };
+		ED453D262464542100F8BA32 /* MortageExpenses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MortageExpenses.swift; sourceTree = "<group>"; };
+		ED453D282464587700F8BA32 /* PeriodicExpenses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodicExpenses.swift; sourceTree = "<group>"; };
+		ED453D2A2464594500F8BA32 /* TaxesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +66,7 @@
 		ED453D0C24640F6F00F8BA32 /* Buy&Rent */ = {
 			isa = PBXGroup;
 			children = (
+				ED453D21246410F500F8BA32 /* Model */,
 				ED453D0D24640F6F00F8BA32 /* AppDelegate.swift */,
 				ED453D0F24640F6F00F8BA32 /* SceneDelegate.swift */,
 				ED453D1124640F6F00F8BA32 /* ContentView.swift */,
@@ -63,6 +74,10 @@
 				ED453D1824640F7600F8BA32 /* LaunchScreen.storyboard */,
 				ED453D1B24640F7600F8BA32 /* Info.plist */,
 				ED453D1524640F7600F8BA32 /* Preview Content */,
+				ED453D242464512F00F8BA32 /* BuyExpenses.swift */,
+				ED453D262464542100F8BA32 /* MortageExpenses.swift */,
+				ED453D282464587700F8BA32 /* PeriodicExpenses.swift */,
+				ED453D2A2464594500F8BA32 /* TaxesView.swift */,
 			);
 			path = "Buy&Rent";
 			sourceTree = "<group>";
@@ -73,6 +88,14 @@
 				ED453D1624640F7600F8BA32 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		ED453D21246410F500F8BA32 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				ED453D222464113700F8BA32 /* FormModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -146,9 +169,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED453D292464587700F8BA32 /* PeriodicExpenses.swift in Sources */,
 				ED453D0E24640F6F00F8BA32 /* AppDelegate.swift in Sources */,
+				ED453D2B2464594500F8BA32 /* TaxesView.swift in Sources */,
 				ED453D1024640F6F00F8BA32 /* SceneDelegate.swift in Sources */,
+				ED453D272464542100F8BA32 /* MortageExpenses.swift in Sources */,
+				ED453D252464512F00F8BA32 /* BuyExpenses.swift in Sources */,
 				ED453D1224640F6F00F8BA32 /* ContentView.swift in Sources */,
+				ED453D232464113700F8BA32 /* FormModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,10 +317,12 @@
 				DEVELOPMENT_TEAM = 6RRM22NQ6G;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Buy&Rent/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.app.ArEW8w.Buy-Rent";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -309,10 +339,12 @@
 				DEVELOPMENT_TEAM = 6RRM22NQ6G;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Buy&Rent/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.app.ArEW8w.Buy-Rent";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
