@@ -9,13 +9,36 @@
 import SwiftUI
 
 struct MortageExpenses: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+  
+  @State private var test: Double = 0.0
+  
+  @State private var text1: String = ""
+  @State private var text1Placeholder: String = "0.00"
+  
+  static let currencyEditing: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.maximumFractionDigits = 2
+    return formatter
+  }()
+  
+  
+  var body: some View {
+    VStack {
+      Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+      TextField( self.$text1Placeholder.wrappedValue, text: $text1, onEditingChanged: { (editing) in
+        if editing {
+          self.$text1Placeholder.wrappedValue
+            = self.$text1.wrappedValue
+          self.$text1.wrappedValue = ""
+        }
+      }).textFieldStyle(RoundedBorderTextFieldStyle())
     }
+  }
 }
 
 struct MortageExpenses_Previews: PreviewProvider {
-    static var previews: some View {
-        MortageExpenses()
-    }
+  static var previews: some View {
+    MortageExpenses()
+  }
 }
