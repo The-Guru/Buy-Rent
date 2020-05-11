@@ -10,14 +10,15 @@ import SwiftUI
 
 struct ContentView: View {
   
-  @State private var buyValue: Double = 0.0
-  @State private var buyExpenses: String = ""
+  @State private var appModel: AppModel = AppModel()
+  
   @State private var workExpenses: Double = 0.0
   @State private var mortageValue: String = ""
   @State private var mortageExpenses: String = ""
   @State private var rentValue: Double = 0.0
   @State private var periodicExpenses: String = ""
   @State private var taxesValue: String = ""
+  @State private var refresh = false
   
   private var totalPropertyValue: Double = 0.0
   private var moneyToPay: Double = 0.0
@@ -45,10 +46,10 @@ struct ContentView: View {
             Text("€")
           }
           HStack {
-            NavigationLink(destination: BuyExpenses()) {
+            NavigationLink(destination: BuyExpenses(appModel: $appModel)) {
               Text("Gastos de la compra")
                 .fixedSize()
-              TextField("0", text: $buyExpenses)
+              TextField("0" + (refresh ? "" : " "), text: $appModel.buyExpenses)
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 7)
@@ -165,36 +166,55 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
     //Group {
-      ContentView()
-        //.environment(\.colorScheme, .light)
-      
-      //ContentView()
-        //.environment(\.colorScheme, .dark)
+    ContentView()
+    //.environment(\.colorScheme, .light)
+    
+    //ContentView()
+    //.environment(\.colorScheme, .dark)
     //}
   }
 }
 
 extension ContentView {
   
-  static let numberFormatter = NumberFormatter()
-  
-  func textFieldFormattedValue(for value: Double) -> String {
-    let isInteger = floor(value) == value
-    return isInteger ? String(format: "%.0f", value) : String(value)
-  }
-  
   var buyValueProxy: Binding<String> {
     Binding<String>(
       get: {
-        if self.buyValue.isZero {
+        if self.appModel.buyValue.isZero {
           return String()
         } else {
-          return self.textFieldFormattedValue(for: self.buyValue)
+          return CoreUtils.textFieldFormattedValue(for: self.appModel.buyValue, truncateDecimals: false)
         }
     },
       set: {
-        if let value = ContentView.numberFormatter.number(from: $0) {
-          self.buyValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = CoreUtils.numberFormatter.number(from: $0) {
+          self.appModel.buyValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+          if self.appModel.selectedExpensesComputation == 0 {
+            if self.appModel.buyValue > 0.0 {
+              if self.appModel.buyExpensesPercentage > 0.0 {
+                let conversion = NSNumber(value: (self.appModel.buyValue * self.appModel.buyExpensesPercentage / 100.0))
+                if conversion.doubleValue > 0.0 {
+                  self.appModel.buyExpenses = CoreUtils.textFieldFormattedValue(for: conversion.doubleValue, truncateDecimals: true)
+                } else {
+                  self.appModel.buyExpenses = String()
+                }
+                if self.appModel.buyExpenses.isEmpty {
+                  self.refresh.toggle()
+                }
+              }
+            } else {
+              self.appModel.buyExpenses = String()
+              self.refresh.toggle()
+            }
+          } else {
+            let totalExpenses = self.appModel.computeAllExpenses()
+            if totalExpenses > 0.0 {
+              self.appModel.buyExpenses = CoreUtils.textFieldFormattedValue(for: totalExpenses, truncateDecimals: true)
+            } else {
+              self.appModel.buyExpenses = String()
+              self.refresh.toggle()
+            }
+          }
         }
     })
   }
@@ -205,11 +225,11 @@ extension ContentView {
         if self.workExpenses.isZero {
           return String()
         } else {
-          return self.textFieldFormattedValue(for: self.workExpenses)
+          return CoreUtils.textFieldFormattedValue(for: self.workExpenses, truncateDecimals: false)
         }
     },
       set: {
-        if let value = ContentView.numberFormatter.number(from: $0) {
+        if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.workExpenses = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
         }
     })
@@ -221,11 +241,11 @@ extension ContentView {
         if self.rentValue.isZero {
           return String()
         } else {
-          return self.textFieldFormattedValue(for: self.rentValue)
+          return CoreUtils.textFieldFormattedValue(for: self.rentValue, truncateDecimals: false)
         }
     },
       set: {
-        if let value = ContentView.numberFormatter.number(from: $0) {
+        if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.rentValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
         }
     })
