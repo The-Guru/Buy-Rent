@@ -32,7 +32,7 @@ struct BuyExpenses: View {
         self.appModel.buyExpenses = String()
       }
     } else {
-      let totalExpenses = self.appModel.computeAllExpenses()
+      let totalExpenses = self.appModel.computeBuyExpenses()
       if totalExpenses > 0.0 {
         self.appModel.buyExpenses = CoreUtils.textFieldFormattedValue(for: totalExpenses, truncateDecimals: true)
       } else {
@@ -52,13 +52,7 @@ struct BuyExpenses: View {
           .tag(1)
       }
       .onReceive([appModel.selectedExpensesComputation].publisher.first()) {
-        if $0 == 0 {
-          // Computation by percentage
-          self.updateBuyExpenses(percentage: true)
-        } else {
-          // Individual computation
-          self.updateBuyExpenses(percentage: false)
-        }
+        self.updateBuyExpenses(percentage: $0 == 0)
       }
       
       if appModel.selectedExpensesComputation == 0 {
@@ -142,17 +136,14 @@ struct BuyExpenses: View {
       }
     }
     .navigationBarTitle(Text("Gastos de la compra"), displayMode: .inline)
+    .onDisappear {
+      self.updateBuyExpenses(percentage: self.appModel.selectedExpensesComputation == 0)
+    }
   }
   
   struct BuyExpenses_Previews: PreviewProvider {
     static var previews: some View {
-      //Group {
       BuyExpenses(appModel: .constant(AppModel()))
-      //.environment(\.colorScheme, .light)
-      
-      //BuyExpenses()
-      // .environment(\.colorScheme, .dark)
-      //}
     }
   }
 }
@@ -171,8 +162,6 @@ extension BuyExpenses {
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.appModel.buyExpensesPercentage = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
-          // Compute property expenses using the property value
-          self.updateBuyExpenses(percentage: true)
         }
     })
   }
@@ -189,7 +178,6 @@ extension BuyExpenses {
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.appModel.notaryExpenses = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
-          self.updateBuyExpenses(percentage: false)
         }
     })
   }
@@ -206,7 +194,6 @@ extension BuyExpenses {
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.appModel.registryExpenses = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
-          self.updateBuyExpenses(percentage: false)
         }
     })
   }
@@ -223,7 +210,6 @@ extension BuyExpenses {
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.appModel.managementExpenses = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
-          self.updateBuyExpenses(percentage: false)
         }
     })
   }
@@ -240,7 +226,6 @@ extension BuyExpenses {
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.appModel.itpPercentage = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
-          self.updateBuyExpenses(percentage: false)
         }
     })
   }
@@ -257,7 +242,6 @@ extension BuyExpenses {
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.appModel.realStateCommission = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
-          self.updateBuyExpenses(percentage: false)
         }
     })
   }

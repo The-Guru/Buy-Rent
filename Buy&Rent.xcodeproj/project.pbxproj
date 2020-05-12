@@ -164,12 +164,12 @@
 				ED453D1124640F6F00F8BA32 /* ContentView.swift */,
 				ED453D1324640F7500F8BA32 /* Assets.xcassets */,
 				ED453D1824640F7600F8BA32 /* LaunchScreen.storyboard */,
-				ED453D1B24640F7600F8BA32 /* Info.plist */,
-				ED453D1524640F7600F8BA32 /* Preview Content */,
 				ED453D242464512F00F8BA32 /* BuyExpenses.swift */,
 				ED453D262464542100F8BA32 /* MortageExpenses.swift */,
 				ED453D282464587700F8BA32 /* PeriodicExpenses.swift */,
 				ED453D2A2464594500F8BA32 /* TaxesView.swift */,
+				ED453D1B24640F7600F8BA32 /* Info.plist */,
+				ED453D1524640F7600F8BA32 /* Preview Content */,
 			);
 			path = "Buy&Rent";
 			sourceTree = "<group>";

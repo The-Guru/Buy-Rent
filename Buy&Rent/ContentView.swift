@@ -13,10 +13,6 @@ struct ContentView: View {
   @State private var appModel: AppModel = AppModel()
   
   @State private var workExpenses: Double = 0.0
-  @State private var mortageValue: String = ""
-  @State private var mortageExpenses: String = ""
-  @State private var rentValue: Double = 0.0
-  @State private var periodicExpenses: String = ""
   @State private var taxesValue: String = ""
   @State private var refresh = false
   
@@ -74,10 +70,10 @@ struct ContentView: View {
         
         Section(header: Text("Hipoteca")) {
           HStack {
-            NavigationLink(destination: MortageExpenses()) {
+            NavigationLink(destination: MortageExpenses(appModel: $appModel)) {
               Text("Importe del préstamo")
                 .fixedSize()
-              TextField("0", text: $mortageValue)
+              TextField("0", text: $appModel.mortageValueString)
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 1)
@@ -88,7 +84,7 @@ struct ContentView: View {
           HStack {
             Text("Gastos de la hipoteca")
               .fixedSize()
-            TextField("0", text: $mortageExpenses)
+            TextField("0", text: $appModel.mortageExpenses)
               .multilineTextAlignment(.trailing)
               .textFieldStyle(RoundedBorderTextFieldStyle())
               .disabled(true)
@@ -111,10 +107,10 @@ struct ContentView: View {
             Text("€/mes")
           }
           HStack {
-            NavigationLink(destination: PeriodicExpenses()) {
+            NavigationLink(destination: PeriodicExpenses(appModel: $appModel)) {
               Text("Gastos periódicos")
                 .fixedSize()
-              TextField("0", text: $periodicExpenses)
+              TextField("0" + (refresh ? "" : " "), text: $appModel.periodicExpenses)
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 27)
@@ -126,7 +122,7 @@ struct ContentView: View {
         
         Section(header: Text("Impuestos")) {
           HStack {
-            NavigationLink(destination: TaxesView()) {
+            NavigationLink(destination: TaxesView(appModel: $appModel)) {
               Text("Impuestos")
                 .fixedSize()
               TextField("0", text: $taxesValue)
@@ -165,13 +161,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
-    //Group {
     ContentView()
-    //.environment(\.colorScheme, .light)
-    
-    //ContentView()
-    //.environment(\.colorScheme, .dark)
-    //}
   }
 }
 
@@ -207,7 +197,7 @@ extension ContentView {
               self.refresh.toggle()
             }
           } else {
-            let totalExpenses = self.appModel.computeAllExpenses()
+            let totalExpenses = self.appModel.computeBuyExpenses()
             if totalExpenses > 0.0 {
               self.appModel.buyExpenses = CoreUtils.textFieldFormattedValue(for: totalExpenses, truncateDecimals: true)
             } else {
@@ -215,6 +205,11 @@ extension ContentView {
               self.refresh.toggle()
             }
           }
+        }
+        
+        if self.appModel.mortagePercentageToggle {
+          let mortageValue = self.appModel.buyValue * self.appModel.mortageValue  / 100.0
+          self.appModel.mortageValueString = mortageValue > 0.0 ? CoreUtils.textFieldFormattedValue(for: mortageValue, truncateDecimals: true) : String()
         }
     })
   }
@@ -238,15 +233,22 @@ extension ContentView {
   var rentValueProxy: Binding<String> {
     Binding<String>(
       get: {
-        if self.rentValue.isZero {
+        if self.appModel.rentValue.isZero {
           return String()
         } else {
-          return CoreUtils.textFieldFormattedValue(for: self.rentValue, truncateDecimals: false)
+          return CoreUtils.textFieldFormattedValue(for: self.appModel.rentValue, truncateDecimals: false)
         }
     },
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.rentValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+          self.appModel.rentValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+          let totalPeriodicExpenses = self.appModel.computePeriodicExpenses()
+          if totalPeriodicExpenses > 0.0 {
+            self.appModel.periodicExpenses = CoreUtils.textFieldFormattedValue(for: totalPeriodicExpenses, truncateDecimals: true)
+          } else {
+            self.appModel.periodicExpenses = String()
+            self.refresh.toggle()
+          }
         }
     })
   }
