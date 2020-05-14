@@ -11,8 +11,6 @@ import SwiftUI
 struct ContentView: View {
   
   @State private var appModel: AppModel = AppModel()
-  
-  @State private var workExpenses: Double = 0.0
   @State private var taxesValue: String = ""
   @State private var refresh = false
   
@@ -70,10 +68,10 @@ struct ContentView: View {
         
         Section(header: Text("Hipoteca")) {
           HStack {
-            NavigationLink(destination: MortageExpenses(appModel: $appModel)) {
+            NavigationLink(destination: MortgageExpenses(appModel: $appModel)) {
               Text("Importe del préstamo")
                 .fixedSize()
-              TextField("0", text: $appModel.mortageValueString)
+              TextField("0", text: $appModel.mortgageValueString)
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 1)
@@ -84,7 +82,7 @@ struct ContentView: View {
           HStack {
             Text("Gastos de la hipoteca")
               .fixedSize()
-            TextField("0", text: $appModel.mortageExpenses)
+            TextField("0", text: $appModel.mortgageExpenses)
               .multilineTextAlignment(.trailing)
               .textFieldStyle(RoundedBorderTextFieldStyle())
               .disabled(true)
@@ -207,9 +205,9 @@ extension ContentView {
           }
         }
         
-        if self.appModel.mortagePercentageToggle {
-          let mortageValue = self.appModel.buyValue * self.appModel.mortageValue  / 100.0
-          self.appModel.mortageValueString = mortageValue > 0.0 ? CoreUtils.textFieldFormattedValue(for: mortageValue, truncateDecimals: true) : String()
+        if self.appModel.mortgagePercentageToggle {
+          let mortgageValue = self.appModel.buyValue * self.appModel.mortgageValue  / 100.0
+          self.appModel.mortgageValueString = mortgageValue > 0.0 ? CoreUtils.textFieldFormattedValue(for: mortgageValue, truncateDecimals: true) : String()
         }
     })
   }
@@ -217,15 +215,15 @@ extension ContentView {
   var workExpensesProxy: Binding<String> {
     Binding<String>(
       get: {
-        if self.workExpenses.isZero {
+        if self.appModel.workExpenses.isZero {
           return String()
         } else {
-          return CoreUtils.textFieldFormattedValue(for: self.workExpenses, truncateDecimals: false)
+          return CoreUtils.textFieldFormattedValue(for: self.appModel.workExpenses, truncateDecimals: false)
         }
     },
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.workExpenses = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+          self.appModel.workExpenses = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
         }
     })
   }

@@ -14,11 +14,12 @@ struct AppModel {
   // Content View
   var buyValue: Double = 0.0
   var buyExpenses: String = String()
-  var mortageValueString: String = String()
-  var mortageExpenses: String = String()
+  var workExpenses: Double = 0.0
+  var mortgageValueString: String = String()
+  var mortgageExpenses: String = String()
   var rentValue: Double = 0.0
   var periodicExpenses: String = String()
-  
+  var taxes: String = String()
   // BuyExpenses
   var buyExpensesPercentage: Double = 0.0
   var selectedExpensesComputation: Int = 0
@@ -27,14 +28,14 @@ struct AppModel {
   var managementExpenses: Double = 0.0
   var itpPercentage: Double = 0.0
   var realStateCommission: Double = 0.0
-  // MortageExpenses
-  var mortageValue: Double = 0.0
-  var mortagePercentage: Double = 0.0
-  var mortageYears: Double = 0.0
-  var mortagePercentageToggle: Bool = false
-  var mortageOpenComission: Double = 0.0
-  var mortageRating: Double = 0.0
-  var mortageBrokerComission: Double = 0.0
+  // MortgageExpenses
+  var mortgageValue: Double = 0.0
+  var mortgagePercentage: Double = 0.0
+  var mortgageYears: Double = 0.0
+  var mortgagePercentageToggle: Bool = false
+  var mortgageOpenComission: Double = 0.0
+  var mortgageRating: Double = 0.0
+  var mortgageBrokerComission: Double = 0.0
   // PeriodicExpenses
   var defaultInsurance: Double = 0.0
   var homeInsurance: Double = 0.0
@@ -43,6 +44,11 @@ struct AppModel {
   var ibiValue: Double = 0.0
   var maintenanceValue: Double = 0.0
   var emptySesonsValue: Double = 0.0
+  // Taxes
+  var irpfRange: Int = 0
+  var mainResidence: Int = 0
+  var landBuildingValue: Double = 0.0
+  var landGroundValue: Double = 0.0
   
   func computeBuyExpenses() -> Double {
     let itpComputation = buyValue * itpPercentage / 100.0
@@ -50,8 +56,8 @@ struct AppModel {
       itpComputation + realStateCommission
   }
   
-  func computeMortageExpenses() -> Double {
-    return mortageOpenComission + mortageRating + mortageBrokerComission
+  func computeMortgageExpenses() -> Double {
+    return mortgageOpenComission + mortgageRating + mortgageBrokerComission
   }
   
   func computePeriodicExpenses() -> Double {
@@ -80,6 +86,20 @@ Los ingresos por el alquiler del inmueble se sumarán a la base general del IRPF
 El porcentaje concreto a pagar por el alquiler será el que corresponda según los tipos generales de IRPF.
 
 Estos tipos se aplican de forma progresiva y a la hora de calcular el IRPF también se restarán los gastos deducibles para pagar menos impuestos.
+
+Tramos de IRPF
+
+Salario bruto anual - Retención de IRPF
+
+De 0 a 12.450€       - 19%
+
+De 12.450€ a 20.200€ - 24%
+
+De 20.200€ a 35.200€ - 30%
+
+De 35.200€ a 60.000€ - 37%
+
+Más de 60.000€       - 45%
 """)
   
   static let mainResidenceMessage = AlertMessage(title: "Uso de la vivienda", message: """
@@ -106,7 +126,7 @@ El coste de adquisición (sin incluir el valor del suelo).
 El valor catastral (sin incluir el valor del suelo).
 """)
   
-  static let mortageInterestMessage = AlertMessage(title: "Intereses de la hipoteca", message: """
+  static let mortgageInterestMessage = AlertMessage(title: "Intereses de la hipoteca", message: """
 Para la determinación del rendimiento neto, se deducirá de los rendimientos íntegros el siguiente gasto:
 
 Todos los gastos necesarios para la obtención de los rendimientos. Se considerarán gastos necesarios para la obtención de los rendimientos, entre otros, los siguientes:

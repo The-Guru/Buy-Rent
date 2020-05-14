@@ -10,11 +10,15 @@ import SwiftUI
 
 struct TaxesView: View {
   
-  // TODO: mirar el excel de Carlos Galán e implementar esta parte
-  
   @Binding var appModel: AppModel
-  @State private var test = 0
-  @State private var message: AlertMessage? = nil
+  @State private var irpfMessage: AlertMessage? = nil
+  @State private var mainResidenceMessage: AlertMessage? = nil
+  @State private var landRegistryMessage: AlertMessage? = nil
+  @State private var landRegistryMessage2: AlertMessage? = nil
+  @State private var annualDepreciationMessage: AlertMessage? = nil
+  @State private var mortgageInterestMessage: AlertMessage? = nil
+  @State private var taxesMessage: AlertMessage? = nil
+  @State private var annualDepreciation: String = String()
   
   init(appModel: Binding<AppModel>) {
     // Drop space between form sections
@@ -28,41 +32,49 @@ struct TaxesView: View {
         Text("IRPF")
           .fixedSize()
         Button(action: {
-          self.message = TaxMessages.irpfMessage
+          self.irpfMessage = TaxMessages.irpfMessage
         }) {
           Image(systemName: "info.circle")
-        }.alert(item: $message) { message in
+        }.alert(item: $irpfMessage) { message in
           Alert(
             title: Text(message.title),
             message: Text(message.message),
             dismissButton: .default(Text("Ok"))
           )
         }
-        TextField("0", text: defaultInsuranceProxy, onEditingChanged: {
-          if $0 {
-            self.defaultInsuranceProxy.wrappedValue = "0"
-          }
-        })
-          .multilineTextAlignment(.trailing)
-          .textFieldStyle(RoundedBorderTextFieldStyle())
-          .padding(.leading, 149)
-        Text("%")
+        Picker(selection: $appModel.irpfRange, label: Text("")) {
+          Text("19%")
+            .fixedSize()
+            .tag(0)
+          Text("24%")
+            .fixedSize()
+            .tag(1)
+          Text("30%")
+            .fixedSize()
+            .tag(2)
+          Text("37%")
+            .fixedSize()
+            .tag(3)
+          Text("45%")
+            .fixedSize()
+            .tag(4)
+        }.pickerStyle(SegmentedPickerStyle())
       }
       HStack {
         Text("Vivienda habitual del inquilino")
           .fixedSize()
         Button(action: {
-          self.message = TaxMessages.mainResidenceMessage
+          self.mainResidenceMessage = TaxMessages.mainResidenceMessage
         }) {
           Image(systemName: "info.circle")
-        }.alert(item: $message) { message in
+        }.alert(item: $mainResidenceMessage) { message in
           Alert(
             title: Text(message.title),
             message: Text(message.message),
             dismissButton: .default(Text("Ok"))
           )
         }
-        Picker(selection: $test, label: Text("")) {
+        Picker(selection: $appModel.mainResidence, label: Text("")) {
           Text("Sí")
             .fixedSize()
             .tag(0)
@@ -76,19 +88,19 @@ struct TaxesView: View {
         Text("Valor de la construcción")
           .fixedSize()
         Button(action: {
-          self.message = TaxMessages.landRegistryMessage
+          self.landRegistryMessage = TaxMessages.landRegistryMessage
         }) {
           Image(systemName: "info.circle")
-        }.alert(item: $message) { message in
+        }.alert(item: $landRegistryMessage) { message in
           Alert(
             title: Text(message.title),
             message: Text(message.message),
             dismissButton: .default(Text("Ok"))
           )
         }
-        TextField("0", text: defaultInsuranceProxy, onEditingChanged: {
+        TextField("0", text: landBuildingValueProxy, onEditingChanged: {
           if $0 {
-            self.defaultInsuranceProxy.wrappedValue = "0"
+            self.landBuildingValueProxy.wrappedValue = "0"
           }
         })
           .multilineTextAlignment(.trailing)
@@ -99,19 +111,19 @@ struct TaxesView: View {
         Text("Valor del suelo")
           .fixedSize()
         Button(action: {
-          self.message = TaxMessages.landRegistryMessage
+          self.landRegistryMessage2 = TaxMessages.landRegistryMessage
         }) {
           Image(systemName: "info.circle")
-        }.alert(item: $message) { message in
+        }.alert(item: $landRegistryMessage2) { message in
           Alert(
             title: Text(message.title),
             message: Text(message.message),
             dismissButton: .default(Text("Ok"))
           )
         }
-        TextField("0", text: defaultInsuranceProxy, onEditingChanged: {
+        TextField("0", text: landGroundValueProxy, onEditingChanged: {
           if $0 {
-            self.defaultInsuranceProxy.wrappedValue = "0"
+            self.landGroundValueProxy.wrappedValue = "0"
           }
         })
           .multilineTextAlignment(.trailing)
@@ -124,10 +136,10 @@ struct TaxesView: View {
           Text("Amortización anual")
             .fixedSize()
           Button(action: {
-            self.message = TaxMessages.annualDepreciationMessage
+            self.annualDepreciationMessage = TaxMessages.annualDepreciationMessage
           }) {
             Image(systemName: "info.circle")
-          }.alert(item: $message) { message in
+          }.alert(item: $annualDepreciationMessage) { message in
             Alert(
               title: Text(message.title),
               message: Text(message.message),
@@ -135,17 +147,17 @@ struct TaxesView: View {
             )
           }
           Spacer()
-          Text("0 €/año")
+          Text((!annualDepreciation.isEmpty ? annualDepreciation : "0") + " €/año")
             .fixedSize()
         }
         HStack {
           Text("Intereses de la hipoteca")
             .fixedSize()
           Button(action: {
-            self.message = TaxMessages.mortageInterestMessage
+            self.mortgageInterestMessage = TaxMessages.mortgageInterestMessage
           }) {
             Image(systemName: "info.circle")
-          }.alert(item: $message) { message in
+          }.alert(item: $mortgageInterestMessage) { message in
             Alert(
               title: Text(message.title),
               message: Text(message.message),
@@ -160,10 +172,10 @@ struct TaxesView: View {
           Text("Impuestos")
             .fixedSize()
           Button(action: {
-            self.message = TaxMessages.taxesMessage
+            self.taxesMessage = TaxMessages.taxesMessage
           }) {
             Image(systemName: "info.circle")
-          }.alert(item: $message) { message in
+          }.alert(item: $taxesMessage) { message in
             Alert(
               title: Text(message.title),
               message: Text(message.message),
@@ -177,6 +189,10 @@ struct TaxesView: View {
       }
     }
     .navigationBarTitle(Text("Impuestos"), displayMode: .inline)
+    .onAppear {
+      self.computeAnnualDepreciation()
+      self.computeMortgageInterest()
+    }
   }
   
   struct TaxesView_Previews: PreviewProvider {
@@ -188,18 +204,58 @@ struct TaxesView: View {
 
 extension TaxesView {
   
-  var defaultInsuranceProxy: Binding<String> {
+  func computeAnnualDepreciation() {
+    if appModel.landGroundValue > 0.0 && appModel.landBuildingValue > 0.0 {
+      if let buyExpenses = CoreUtils.numberFormatter.number(from: appModel.buyExpenses) {
+        let buildingPercentage = appModel.landBuildingValue / (appModel.landBuildingValue + appModel.landGroundValue)
+        let computation = 0.03 * (buildingPercentage * appModel.buyValue + buyExpenses.doubleValue + appModel.workExpenses)
+        if computation > 0.0 {
+          annualDepreciation = CoreUtils.textFieldFormattedValue(for: computation, truncateDecimals: true)
+        } else {
+          annualDepreciation = String()
+        }
+      } else {
+        annualDepreciation = String()
+      }
+    } else {
+      annualDepreciation = String()
+    }
+  }
+  
+  func computeMortgageInterest() {
+    
+  }
+  
+  var landBuildingValueProxy: Binding<String> {
     Binding<String>(
       get: {
-        if self.appModel.defaultInsurance.isZero {
+        if self.appModel.landBuildingValue.isZero {
           return String()
         } else {
-          return CoreUtils.textFieldFormattedValue(for: self.appModel.defaultInsurance, truncateDecimals: false)
+          return CoreUtils.textFieldFormattedValue(for: self.appModel.landBuildingValue, truncateDecimals: false)
         }
     },
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.defaultInsurance = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+          self.appModel.landBuildingValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+          self.computeAnnualDepreciation()
+        }
+    })
+  }
+  
+  var landGroundValueProxy: Binding<String> {
+    Binding<String>(
+      get: {
+        if self.appModel.landGroundValue.isZero {
+          return String()
+        } else {
+          return CoreUtils.textFieldFormattedValue(for: self.appModel.landGroundValue, truncateDecimals: false)
+        }
+    },
+      set: {
+        if let value = CoreUtils.numberFormatter.number(from: $0) {
+          self.appModel.landGroundValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+          self.computeAnnualDepreciation()
         }
     })
   }
