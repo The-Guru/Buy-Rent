@@ -18,7 +18,6 @@ struct TaxesView: View {
   @State private var annualDepreciationMessage: AlertMessage? = nil
   @State private var mortgageInterestMessage: AlertMessage? = nil
   @State private var taxesMessage: AlertMessage? = nil
-  @State private var annualDepreciation: String = String()
   
   init(appModel: Binding<AppModel>) {
     // Drop space between form sections
@@ -58,7 +57,11 @@ struct TaxesView: View {
           Text("45%")
             .fixedSize()
             .tag(4)
-        }.pickerStyle(SegmentedPickerStyle())
+        }
+        .pickerStyle(SegmentedPickerStyle())
+        .onReceive([appModel.irpfRange].publisher.first()) { _ in
+          self.appModel.taxes = self.appModel.computeTaxes()
+        }
       }
       HStack {
         Text("Vivienda habitual del inquilino")
@@ -83,6 +86,9 @@ struct TaxesView: View {
             .tag(1)
         }
         .pickerStyle(SegmentedPickerStyle())
+        .onReceive([appModel.mainResidence].publisher.first()) { _ in
+          self.appModel.taxes = self.appModel.computeTaxes()
+        }
       }
       HStack {
         Text("Valor de la construcción")
@@ -147,7 +153,7 @@ struct TaxesView: View {
             )
           }
           Spacer()
-          Text((!annualDepreciation.isEmpty ? annualDepreciation : "0") + " €/año")
+          Text((!appModel.annualDepreciation.isEmpty ? appModel.annualDepreciation : "0") + " €/año")
             .fixedSize()
         }
         HStack {
@@ -165,7 +171,7 @@ struct TaxesView: View {
             )
           }
           Spacer()
-          Text("0 €/año")
+          Text((!appModel.mortgageInterestString.isEmpty ? appModel.mortgageInterestString : "0") + " €/año")
             .fixedSize()
         }
         HStack {
@@ -183,15 +189,15 @@ struct TaxesView: View {
             )
           }
           Spacer()
-          Text("0 €/año")
+          Text((!appModel.taxes.isEmpty ? appModel.taxes : "0") + " €/año")
             .fixedSize()
         }
       }
     }
     .navigationBarTitle(Text("Impuestos"), displayMode: .inline)
     .onAppear {
-      self.computeAnnualDepreciation()
-      self.computeMortgageInterest()
+      self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
+      self.appModel.taxes = self.appModel.computeTaxes()
     }
   }
   
@@ -203,28 +209,6 @@ struct TaxesView: View {
 }
 
 extension TaxesView {
-  
-  func computeAnnualDepreciation() {
-    if appModel.landGroundValue > 0.0 && appModel.landBuildingValue > 0.0 {
-      if let buyExpenses = CoreUtils.numberFormatter.number(from: appModel.buyExpenses) {
-        let buildingPercentage = appModel.landBuildingValue / (appModel.landBuildingValue + appModel.landGroundValue)
-        let computation = 0.03 * (buildingPercentage * appModel.buyValue + buyExpenses.doubleValue + appModel.workExpenses)
-        if computation > 0.0 {
-          annualDepreciation = CoreUtils.textFieldFormattedValue(for: computation, truncateDecimals: true)
-        } else {
-          annualDepreciation = String()
-        }
-      } else {
-        annualDepreciation = String()
-      }
-    } else {
-      annualDepreciation = String()
-    }
-  }
-  
-  func computeMortgageInterest() {
-    
-  }
   
   var landBuildingValueProxy: Binding<String> {
     Binding<String>(
@@ -238,7 +222,7 @@ extension TaxesView {
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.appModel.landBuildingValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
-          self.computeAnnualDepreciation()
+          self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
         }
     })
   }
@@ -255,7 +239,7 @@ extension TaxesView {
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.appModel.landGroundValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
-          self.computeAnnualDepreciation()
+          self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
         }
     })
   }

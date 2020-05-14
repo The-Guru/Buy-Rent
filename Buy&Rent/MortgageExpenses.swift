@@ -173,10 +173,13 @@ extension MortgageExpenses {
         self.mortgageNote = CoreUtils.textFieldFormattedValue(for: mortgageNote, truncateDecimals: true)
         self.mortgagePlusInterests = CoreUtils.textFieldFormattedValue(for: mortgageNote * mortgageMonths, truncateDecimals: true)
         self.appModel.mortgageValueString = CoreUtils.textFieldFormattedValue(for: self.appModel.mortgageValue, truncateDecimals: true)
+        let mortgageInterest = ((mortgageNote * mortgageMonths - self.appModel.mortgageValue) / mortgageMonths) * 12.0
+        self.appModel.mortgageInterestString = CoreUtils.textFieldFormattedValue(for: mortgageInterest, truncateDecimals: true)
       } else {
         self.mortgageNote = String()
         self.mortgagePlusInterests = String()
         self.appModel.mortgageValueString = String()
+        self.appModel.mortgageInterestString = String()
       }
     } else {
       if self.appModel.buyValue > 0.0 &&
@@ -190,10 +193,13 @@ extension MortgageExpenses {
         self.mortgageNote = CoreUtils.textFieldFormattedValue(for: mortgageNote, truncateDecimals: true)
         self.mortgagePlusInterests = CoreUtils.textFieldFormattedValue(for: mortgageNote * mortgageMonths, truncateDecimals: true)
         self.appModel.mortgageValueString = CoreUtils.textFieldFormattedValue(for: mortgageValue, truncateDecimals: true)
+        let mortgageInterest = ((mortgageNote * mortgageMonths - mortgageValue) / mortgageMonths) * 12.0
+        self.appModel.mortgageInterestString = CoreUtils.textFieldFormattedValue(for: mortgageInterest, truncateDecimals: true)
       } else {
         self.mortgageNote = String()
         self.mortgagePlusInterests = String()
         self.appModel.mortgageValueString = String()
+        self.appModel.mortgageInterestString = String()
       }
     }
   }

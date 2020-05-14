@@ -49,6 +49,10 @@ struct AppModel {
   var mainResidence: Int = 0
   var landBuildingValue: Double = 0.0
   var landGroundValue: Double = 0.0
+  var mortgageInterestString: String = String()
+  var annualDepreciation: String = String()
+  
+  private let irpfRangeValues: [Double] = [0.19, 0.24, 0.30, 0.37, 0.45]
   
   func computeBuyExpenses() -> Double {
     let itpComputation = buyValue * itpPercentage / 100.0
@@ -68,6 +72,36 @@ struct AppModel {
     let totalPeriodicExpenses = totalYearlyExpensesByMonth + communityValue +
       maintenancePerMonth + emptySesonsPerMonth
     return totalPeriodicExpenses
+  }
+  
+  func computeAnnualDepreciation() -> String {
+    if landGroundValue > 0.0 && landBuildingValue > 0.0 {
+      let buyExpenses = CoreUtils.numberFormatter.number(from: self.buyExpenses) ?? 0.0
+      let buildingPercentage = landBuildingValue / (landBuildingValue + landGroundValue)
+      let computation = 0.03 * (buildingPercentage * buyValue + buyExpenses.doubleValue + workExpenses)
+      if computation > 0.0 {
+        return CoreUtils.textFieldFormattedValue(for: computation, truncateDecimals: true)
+      } else {
+        return String()
+      }
+    } else {
+      return String()
+    }
+  }
+  
+  func computeTaxes() -> String {
+    let periodicExpenses = CoreUtils.numberFormatter.number(from: self.periodicExpenses) ?? 0.0
+    let depreciation = CoreUtils.numberFormatter.number(from: annualDepreciation) ?? 0.0
+    let mortgageInterest = CoreUtils.numberFormatter.number(from: mortgageInterestString) ?? 0.0
+    
+    let profit = (rentValue * 12.0) - (periodicExpenses.doubleValue * 12.0)
+    let computation = profit - depreciation.doubleValue - mortgageInterest.doubleValue
+    let taxes = mainResidence == 0 ? computation * 0.4 * irpfRangeValues[irpfRange] : computation * irpfRangeValues[irpfRange]
+    if taxes > 0.0 {
+      return CoreUtils.textFieldFormattedValue(for: taxes, truncateDecimals: true)
+    } else {
+      return String()
+    }
   }
 }
 

@@ -11,8 +11,9 @@ import SwiftUI
 struct ContentView: View {
   
   @State private var appModel: AppModel = AppModel()
-  @State private var taxesValue: String = ""
-  @State private var refresh = false
+  @State private var buyExpensesRefresh = false
+  @State private var periodicExpensesRefresh = false
+  @State private var taxesRefresh = false
   
   private var totalPropertyValue: Double = 0.0
   private var moneyToPay: Double = 0.0
@@ -43,7 +44,7 @@ struct ContentView: View {
             NavigationLink(destination: BuyExpenses(appModel: $appModel)) {
               Text("Gastos de la compra")
                 .fixedSize()
-              TextField("0" + (refresh ? "" : " "), text: $appModel.buyExpenses)
+              TextField("0" + (buyExpensesRefresh ? "" : " "), text: $appModel.buyExpenses)
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 7)
@@ -108,7 +109,7 @@ struct ContentView: View {
             NavigationLink(destination: PeriodicExpenses(appModel: $appModel)) {
               Text("Gastos periódicos")
                 .fixedSize()
-              TextField("0" + (refresh ? "" : " "), text: $appModel.periodicExpenses)
+              TextField("0" + (periodicExpensesRefresh ? "" : " "), text: $appModel.periodicExpenses)
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 27)
@@ -123,7 +124,7 @@ struct ContentView: View {
             NavigationLink(destination: TaxesView(appModel: $appModel)) {
               Text("Impuestos")
                 .fixedSize()
-              TextField("0", text: $taxesValue)
+              TextField("0" + (taxesRefresh ? "" : " "), text: $appModel.taxes)
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 84)
@@ -153,6 +154,10 @@ struct ContentView: View {
         }
       }
       .navigationBarTitle(Text("Buy & Rent"), displayMode: .inline)
+      .onAppear {
+        self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
+        self.appModel.taxes = self.appModel.computeTaxes()
+      }
     }
   }
 }
@@ -187,12 +192,12 @@ extension ContentView {
                   self.appModel.buyExpenses = String()
                 }
                 if self.appModel.buyExpenses.isEmpty {
-                  self.refresh.toggle()
+                  self.buyExpensesRefresh.toggle()
                 }
               }
             } else {
               self.appModel.buyExpenses = String()
-              self.refresh.toggle()
+              self.buyExpensesRefresh.toggle()
             }
           } else {
             let totalExpenses = self.appModel.computeBuyExpenses()
@@ -200,7 +205,7 @@ extension ContentView {
               self.appModel.buyExpenses = CoreUtils.textFieldFormattedValue(for: totalExpenses, truncateDecimals: true)
             } else {
               self.appModel.buyExpenses = String()
-              self.refresh.toggle()
+              self.buyExpensesRefresh.toggle()
             }
           }
         }
@@ -208,6 +213,12 @@ extension ContentView {
         if self.appModel.mortgagePercentageToggle {
           let mortgageValue = self.appModel.buyValue * self.appModel.mortgageValue  / 100.0
           self.appModel.mortgageValueString = mortgageValue > 0.0 ? CoreUtils.textFieldFormattedValue(for: mortgageValue, truncateDecimals: true) : String()
+        }
+        
+        self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
+        self.appModel.taxes = self.appModel.computeTaxes()
+        if self.appModel.taxes.isEmpty {
+          self.taxesRefresh.toggle()
         }
     })
   }
@@ -224,6 +235,12 @@ extension ContentView {
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.appModel.workExpenses = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        }
+        
+        self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
+        self.appModel.taxes = self.appModel.computeTaxes()
+        if self.appModel.taxes.isEmpty {
+          self.taxesRefresh.toggle()
         }
     })
   }
@@ -245,8 +262,13 @@ extension ContentView {
             self.appModel.periodicExpenses = CoreUtils.textFieldFormattedValue(for: totalPeriodicExpenses, truncateDecimals: true)
           } else {
             self.appModel.periodicExpenses = String()
-            self.refresh.toggle()
+            self.periodicExpensesRefresh.toggle()
           }
+        }
+        
+        self.appModel.taxes = self.appModel.computeTaxes()
+        if self.appModel.taxes.isEmpty {
+          self.taxesRefresh.toggle()
         }
     })
   }
