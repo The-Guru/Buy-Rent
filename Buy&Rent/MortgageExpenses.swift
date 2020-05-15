@@ -11,7 +11,6 @@ import SwiftUI
 struct MortgageExpenses: View {
   
   @Binding var appModel: AppModel
-  @State private var mortgageNote: String = String()
   @State private var mortgagePlusInterests: String = String()
   
   init(appModel: Binding<AppModel>) {
@@ -114,7 +113,7 @@ struct MortgageExpenses: View {
           Text("Letra hipotecaria")
             .fixedSize()
           Spacer()
-          Text((!mortgageNote.isEmpty ? mortgageNote : "0") + " €/mes")
+          Text((!appModel.mortgageNote.isEmpty ? appModel.mortgageNote : "0") + " €/mes")
             .fixedSize()
         }
         HStack {
@@ -170,13 +169,13 @@ extension MortgageExpenses {
         let mortgageNote = self.appModel.mortgageValue * mortgagePerMonth /
           (1.0 - pow(1.0 + mortgagePerMonth, -mortgageMonths))
         
-        self.mortgageNote = CoreUtils.textFieldFormattedValue(for: mortgageNote, truncateDecimals: true)
+        self.appModel.mortgageNote = CoreUtils.textFieldFormattedValue(for: mortgageNote, truncateDecimals: true)
         self.mortgagePlusInterests = CoreUtils.textFieldFormattedValue(for: mortgageNote * mortgageMonths, truncateDecimals: true)
         self.appModel.mortgageValueString = CoreUtils.textFieldFormattedValue(for: self.appModel.mortgageValue, truncateDecimals: true)
         let mortgageInterest = ((mortgageNote * mortgageMonths - self.appModel.mortgageValue) / mortgageMonths) * 12.0
         self.appModel.mortgageInterestString = CoreUtils.textFieldFormattedValue(for: mortgageInterest, truncateDecimals: true)
       } else {
-        self.mortgageNote = String()
+        self.appModel.mortgageNote = String()
         self.mortgagePlusInterests = String()
         self.appModel.mortgageValueString = String()
         self.appModel.mortgageInterestString = String()
@@ -190,13 +189,13 @@ extension MortgageExpenses {
         let mortgageValue = ((self.appModel.buyValue * self.appModel.mortgageValue) / 100.0)
         let mortgageNote = mortgageValue * mortgagePerMonth / (1.0 - pow(1.0 + mortgagePerMonth, -mortgageMonths))
         
-        self.mortgageNote = CoreUtils.textFieldFormattedValue(for: mortgageNote, truncateDecimals: true)
+        self.appModel.mortgageNote = CoreUtils.textFieldFormattedValue(for: mortgageNote, truncateDecimals: true)
         self.mortgagePlusInterests = CoreUtils.textFieldFormattedValue(for: mortgageNote * mortgageMonths, truncateDecimals: true)
         self.appModel.mortgageValueString = CoreUtils.textFieldFormattedValue(for: mortgageValue, truncateDecimals: true)
         let mortgageInterest = ((mortgageNote * mortgageMonths - mortgageValue) / mortgageMonths) * 12.0
         self.appModel.mortgageInterestString = CoreUtils.textFieldFormattedValue(for: mortgageInterest, truncateDecimals: true)
       } else {
-        self.mortgageNote = String()
+        self.appModel.mortgageNote = String()
         self.mortgagePlusInterests = String()
         self.appModel.mortgageValueString = String()
         self.appModel.mortgageInterestString = String()

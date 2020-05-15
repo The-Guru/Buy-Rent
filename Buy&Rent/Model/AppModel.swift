@@ -20,6 +20,7 @@ struct AppModel {
   var rentValue: Double = 0.0
   var periodicExpenses: String = String()
   var taxes: String = String()
+  var mortgageNote: String = String()
   // BuyExpenses
   var buyExpensesPercentage: Double = 0.0
   var selectedExpensesComputation: Int = 0
@@ -179,6 +180,24 @@ En el supuesto de subarrendamientos, las cantidades percibidas por el subarrenda
 
 Se entiende que el arrendamiento se realiza como actividad económica cuando en el desarrollo de la actividad exista, al menos, una persona empleada con contrato laboral y a jornada completa, para el desempeño de dicha gestión.
 """)
+  
+  static let grossReturnMessage = AlertMessage(title: "Rentabilidad bruta", message: """
+La rentabilidad bruta es la diferencia entre los ingresos que se obtienen por el alquiler del inmueble y los gastos que conlleva la compra.
+""")
+  
+  static let netReturnMessage = AlertMessage(title: "Rentabilidad neta", message: """
+La rentabilidad neta es aquella que se refiere a los beneficios obtenidos con el alquiler, una vez descontados los gastos periódicos y los impuestos.
+""")
+  
+  static let cashflowMessage = AlertMessage(title: "Cashflow", message: """
+El flujo de caja en este caso es el beneficio neto después de haber pagado la deuda hipotecaria del periodo (si la hubiera).
+""")
+  
+  static let roiMessage = AlertMessage(title: "ROI", message: """
+El ROI o retorno sobre la inversión es un índice que permite calcular el rendimiento de una inversión. Mide el porcentaje de retorno que una inversión en un inmueble genera en un año.
+""")
+
+static let perMessage = AlertMessage(title: "PER", message: """
+El PER equivale al número de veces que el precio de alquiler está contenido en el precio de venta o al número de años que tardaríamos en pagar el precio de un inmueble mediante el alquiler en las codiciones actuales.
+""")
 }
-
-

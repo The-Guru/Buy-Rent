@@ -11,11 +11,19 @@ import SwiftUI
 struct ContentView: View {
   
   @State private var appModel: AppModel = AppModel()
+  
+  @State private var grossReturnMessage: AlertMessage? = nil
+  @State private var netReturnMessage: AlertMessage? = nil
+  @State private var cashflowMessage: AlertMessage? = nil
+  @State private var roiMessage: AlertMessage? = nil
+  @State private var perMessage: AlertMessage? = nil
+  
   @State private var buyExpensesRefresh = false
   @State private var periodicExpensesRefresh = false
   @State private var taxesRefresh = false
   
-  private var totalPropertyValue: Double = 0.0
+  @State private var totalPropertyValue: String = String()
+  @State private var moneyToSpend: String = String()
   private var moneyToPay: Double = 0.0
   
   init() {
@@ -34,6 +42,16 @@ struct ContentView: View {
             TextField("0", text: buyValueProxy, onEditingChanged: {
               if $0 {
                 self.buyValueProxy.wrappedValue = "0"
+              }
+            }, onCommit: {
+              self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
+              self.appModel.taxes = self.appModel.computeTaxes()
+              self.computeResults()
+              if self.appModel.taxes.isEmpty {
+                self.taxesRefresh.toggle()
+              }
+              if self.appModel.buyExpenses.isEmpty {
+                self.buyExpensesRefresh.toggle()
               }
             })
               .multilineTextAlignment(.trailing)
@@ -59,6 +77,13 @@ struct ContentView: View {
             TextField("0", text: workExpensesProxy, onEditingChanged: {
               if $0 {
                 self.workExpensesProxy.wrappedValue = "0"
+              }
+            }, onCommit: {
+              self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
+              self.appModel.taxes = self.appModel.computeTaxes()
+              self.computeResults()
+              if self.appModel.taxes.isEmpty {
+                self.taxesRefresh.toggle()
               }
             })
               .multilineTextAlignment(.trailing)
@@ -98,6 +123,15 @@ struct ContentView: View {
             TextField("0", text: rentValueProxy, onEditingChanged: {
               if $0 {
                 self.rentValueProxy.wrappedValue = "0"
+              }
+            }, onCommit: {
+              self.appModel.taxes = self.appModel.computeTaxes()
+              self.computeResults()
+              if self.appModel.periodicExpenses.isEmpty {
+                self.periodicExpensesRefresh.toggle()
+              }
+              if self.appModel.taxes.isEmpty {
+                self.taxesRefresh.toggle()
               }
             })
               .multilineTextAlignment(.trailing)
@@ -139,24 +173,139 @@ struct ContentView: View {
             Text("Importe total del inmueble")
               .fixedSize()
             Spacer()
-            Text("\(totalPropertyValue) €")
+            Text((!totalPropertyValue.isEmpty ? totalPropertyValue : "0") + " €")
               .fixedSize()
           }
           HStack {
             Text("Capital a aportar")
               .fixedSize()
             Spacer()
+            Text((!moneyToSpend.isEmpty ? moneyToSpend : "0") + " €")
+              .fixedSize()
+          }
+          HStack {
+            Text("Letra hipotecaria")
+              .fixedSize()
+            Spacer()
+            Text((!appModel.mortgageNote.isEmpty ? appModel.mortgageNote : "0") + " €/mes")
+              .fixedSize()
+          }
+          HStack {
+            Text("Beneficio antes de impuestos")
+              .fixedSize()
+            Spacer()
             Text("\(moneyToPay) €")
               .fixedSize()
           }
-          
-          // TODO: Añadir resto de resultados
+          HStack {
+            Text("Beneficio después de impuestos")
+              .fixedSize()
+            Spacer()
+            Text("\(moneyToPay) €")
+              .fixedSize()
+          }
+          HStack {
+            Text("Rentabilidad bruta")
+              .fixedSize()
+            Button(action: {
+              self.grossReturnMessage = TaxMessages.grossReturnMessage
+            }) {
+              Image(systemName: "info.circle")
+            }
+            .alert(item: $grossReturnMessage) { message in
+              Alert(
+                title: Text(message.title),
+                message: Text(message.message),
+                dismissButton: .default(Text("Ok"))
+              )
+            }
+            Spacer()
+            Text("\(moneyToPay) €")
+              .fixedSize()
+          }
+          HStack {
+            Text("Rentabilidad neta")
+              .fixedSize()
+            Button(action: {
+              self.netReturnMessage = TaxMessages.netReturnMessage
+            }) {
+              Image(systemName: "info.circle")
+            }
+            .alert(item: $netReturnMessage) { message in
+              Alert(
+                title: Text(message.title),
+                message: Text(message.message),
+                dismissButton: .default(Text("Ok"))
+              )
+            }
+            Spacer()
+            Text("\(moneyToPay) €")
+              .fixedSize()
+          }
+          HStack {
+            Text("Cashflow")
+              .fixedSize()
+            Button(action: {
+              self.cashflowMessage = TaxMessages.cashflowMessage
+            }) {
+              Image(systemName: "info.circle")
+            }
+            .alert(item: $cashflowMessage) { message in
+              Alert(
+                title: Text(message.title),
+                message: Text(message.message),
+                dismissButton: .default(Text("Ok"))
+              )
+            }
+            Spacer()
+            Text("\(moneyToPay) €")
+              .fixedSize()
+          }
+          HStack {
+            Text("ROI. Retorno de la inversión")
+              .fixedSize()
+            Button(action: {
+              self.roiMessage = TaxMessages.roiMessage
+            }) {
+              Image(systemName: "info.circle")
+            }
+            .alert(item: $roiMessage) { message in
+              Alert(
+                title: Text(message.title),
+                message: Text(message.message),
+                dismissButton: .default(Text("Ok"))
+              )
+            }
+            Spacer()
+            Text("\(moneyToPay) €")
+              .fixedSize()
+          }
+          HStack {
+            Text("PER. Relación precio/beneficio")
+              .fixedSize()
+            Button(action: {
+              self.perMessage = TaxMessages.perMessage
+            }) {
+              Image(systemName: "info.circle")
+            }
+            .alert(item: $perMessage) { message in
+              Alert(
+                title: Text(message.title),
+                message: Text(message.message),
+                dismissButton: .default(Text("Ok"))
+              )
+            }
+            Spacer()
+            Text("\(moneyToPay) €")
+              .fixedSize()
+          }
         }
       }
       .navigationBarTitle(Text("Buy & Rent"), displayMode: .inline)
       .onAppear {
         self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
         self.appModel.taxes = self.appModel.computeTaxes()
+        self.computeResults()
       }
     }
   }
@@ -169,6 +318,19 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 extension ContentView {
+  
+  func computeResults() {
+    let totalProperty = appModel.buyValue +
+      (CoreUtils.numberFormatter.number(from: appModel.buyExpenses)?.doubleValue ?? 0.0) +
+      appModel.workExpenses +
+      (CoreUtils.numberFormatter.number(from: appModel.mortgageExpenses)?.doubleValue ?? 0.0)
+    totalPropertyValue = CoreUtils.textFieldFormattedValue(for: totalProperty, truncateDecimals: true)
+    let mortgageValue = appModel.mortgageValueString.isEmpty ? 0.0 : CoreUtils.numberFormatter.number(from: appModel.mortgageValueString)?.doubleValue ?? 0.0
+    let moneyToSpendComputation = totalProperty - mortgageValue
+    moneyToSpend = CoreUtils.textFieldFormattedValue(for: moneyToSpendComputation > 0.0 ? moneyToSpendComputation : 0.0, truncateDecimals: true)
+    
+    // TODO: seguir calculando el beneficio antes de impuestos...
+  }
   
   var buyValueProxy: Binding<String> {
     Binding<String>(
@@ -191,13 +353,9 @@ extension ContentView {
                 } else {
                   self.appModel.buyExpenses = String()
                 }
-                if self.appModel.buyExpenses.isEmpty {
-                  self.buyExpensesRefresh.toggle()
-                }
               }
             } else {
               self.appModel.buyExpenses = String()
-              self.buyExpensesRefresh.toggle()
             }
           } else {
             let totalExpenses = self.appModel.computeBuyExpenses()
@@ -205,7 +363,6 @@ extension ContentView {
               self.appModel.buyExpenses = CoreUtils.textFieldFormattedValue(for: totalExpenses, truncateDecimals: true)
             } else {
               self.appModel.buyExpenses = String()
-              self.buyExpensesRefresh.toggle()
             }
           }
         }
@@ -213,12 +370,6 @@ extension ContentView {
         if self.appModel.mortgagePercentageToggle {
           let mortgageValue = self.appModel.buyValue * self.appModel.mortgageValue  / 100.0
           self.appModel.mortgageValueString = mortgageValue > 0.0 ? CoreUtils.textFieldFormattedValue(for: mortgageValue, truncateDecimals: true) : String()
-        }
-        
-        self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
-        self.appModel.taxes = self.appModel.computeTaxes()
-        if self.appModel.taxes.isEmpty {
-          self.taxesRefresh.toggle()
         }
     })
   }
@@ -235,12 +386,6 @@ extension ContentView {
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.appModel.workExpenses = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
-        }
-        
-        self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
-        self.appModel.taxes = self.appModel.computeTaxes()
-        if self.appModel.taxes.isEmpty {
-          self.taxesRefresh.toggle()
         }
     })
   }
@@ -262,13 +407,7 @@ extension ContentView {
             self.appModel.periodicExpenses = CoreUtils.textFieldFormattedValue(for: totalPeriodicExpenses, truncateDecimals: true)
           } else {
             self.appModel.periodicExpenses = String()
-            self.periodicExpensesRefresh.toggle()
           }
-        }
-        
-        self.appModel.taxes = self.appModel.computeTaxes()
-        if self.appModel.taxes.isEmpty {
-          self.taxesRefresh.toggle()
         }
     })
   }
