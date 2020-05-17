@@ -106,6 +106,19 @@ struct MortgageExpenses: View {
             .padding(.leading, 49)
           Text("€")
         }
+        HStack {
+          Text("AJD")
+            .fixedSize()
+          TextField("0", text: mortgageAJDProxy, onEditingChanged: {
+            if $0 {
+              self.mortgageAJDProxy.wrappedValue = "0"
+            }
+          })
+            .multilineTextAlignment(.trailing)
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .padding(.leading, 141)
+          Text("€")
+        }
       }
       
       Section(header: Text("Resultados")) {
@@ -311,6 +324,23 @@ extension MortgageExpenses {
       set: {
         if let value = CoreUtils.numberFormatter.number(from: $0) {
           self.appModel.mortgageBrokerComission = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+          self.updateMortgageExpenses()
+        }
+    })
+  }
+  
+  var mortgageAJDProxy: Binding<String> {
+    Binding<String>(
+      get: {
+        if self.appModel.mortgageAJD.isZero {
+          return String()
+        } else {
+          return CoreUtils.textFieldFormattedValue(for: self.appModel.mortgageAJD, truncateDecimals: false)
+        }
+    },
+      set: {
+        if let value = CoreUtils.numberFormatter.number(from: $0) {
+          self.appModel.mortgageAJD = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
           self.updateMortgageExpenses()
         }
     })

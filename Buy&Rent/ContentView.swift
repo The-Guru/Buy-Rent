@@ -18,13 +18,18 @@ struct ContentView: View {
   @State private var roiMessage: AlertMessage? = nil
   @State private var perMessage: AlertMessage? = nil
   
-  @State private var buyExpensesRefresh = false
-  @State private var periodicExpensesRefresh = false
-  @State private var taxesRefresh = false
+  @State private var textFieldRefresh = Array(repeating: false, count: 8)
+  @State private var showingAboutAlert = false
   
   @State private var totalPropertyValue: String = String()
   @State private var moneyToSpend: String = String()
-  private var moneyToPay: Double = 0.0
+  @State private var profitBeforeTaxesValue: String = String()
+  @State private var profitAfterTaxesValue: String = String()
+  @State private var grossReturnValue: String = String()
+  @State private var netReturnValue: String = String()
+  @State private var cashflowValue: String = String()
+  @State private var roiValue: String = String()
+  @State private var perValue: String = String()
   
   init() {
     // Set the size of the navigation bar tittles in order to
@@ -39,7 +44,7 @@ struct ContentView: View {
           HStack {
             Text("Importe de la compra")
               .fixedSize()
-            TextField("0", text: buyValueProxy, onEditingChanged: {
+            TextField("0" + (textFieldRefresh[0] ? "" : " "), text: buyValueProxy, onEditingChanged: {
               if $0 {
                 self.buyValueProxy.wrappedValue = "0"
               }
@@ -48,10 +53,12 @@ struct ContentView: View {
               self.appModel.taxes = self.appModel.computeTaxes()
               self.computeResults()
               if self.appModel.taxes.isEmpty {
-                self.taxesRefresh.toggle()
+                // Taxes
+                self.textFieldRefresh[7].toggle()
               }
               if self.appModel.buyExpenses.isEmpty {
-                self.buyExpensesRefresh.toggle()
+                // Buy expenses
+                self.textFieldRefresh[1].toggle()
               }
             })
               .multilineTextAlignment(.trailing)
@@ -62,7 +69,7 @@ struct ContentView: View {
             NavigationLink(destination: BuyExpenses(appModel: $appModel)) {
               Text("Gastos de la compra")
                 .fixedSize()
-              TextField("0" + (buyExpensesRefresh ? "" : " "), text: $appModel.buyExpenses)
+              TextField("0" + (textFieldRefresh[1] ? "" : " "), text: $appModel.buyExpenses)
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 7)
@@ -74,7 +81,7 @@ struct ContentView: View {
             Text("Reforma")
               .fixedSize()
               .padding(.trailing, 100)
-            TextField("0", text: workExpensesProxy, onEditingChanged: {
+            TextField("0" + (textFieldRefresh[2] ? "" : " "), text: workExpensesProxy, onEditingChanged: {
               if $0 {
                 self.workExpensesProxy.wrappedValue = "0"
               }
@@ -83,7 +90,8 @@ struct ContentView: View {
               self.appModel.taxes = self.appModel.computeTaxes()
               self.computeResults()
               if self.appModel.taxes.isEmpty {
-                self.taxesRefresh.toggle()
+                // Taxes
+                self.textFieldRefresh[7].toggle()
               }
             })
               .multilineTextAlignment(.trailing)
@@ -97,7 +105,7 @@ struct ContentView: View {
             NavigationLink(destination: MortgageExpenses(appModel: $appModel)) {
               Text("Importe del préstamo")
                 .fixedSize()
-              TextField("0", text: $appModel.mortgageValueString)
+              TextField("0" + (textFieldRefresh[3] ? "" : " "), text: $appModel.mortgageValueString)
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 1)
@@ -108,7 +116,7 @@ struct ContentView: View {
           HStack {
             Text("Gastos de la hipoteca")
               .fixedSize()
-            TextField("0", text: $appModel.mortgageExpenses)
+            TextField("0" + (textFieldRefresh[4] ? "" : " "), text: $appModel.mortgageExpenses)
               .multilineTextAlignment(.trailing)
               .textFieldStyle(RoundedBorderTextFieldStyle())
               .disabled(true)
@@ -120,7 +128,7 @@ struct ContentView: View {
           HStack {
             Text("Importe del alquiler")
               .fixedSize()
-            TextField("0", text: rentValueProxy, onEditingChanged: {
+            TextField("0" + (textFieldRefresh[5] ? "" : " "), text: rentValueProxy, onEditingChanged: {
               if $0 {
                 self.rentValueProxy.wrappedValue = "0"
               }
@@ -128,10 +136,12 @@ struct ContentView: View {
               self.appModel.taxes = self.appModel.computeTaxes()
               self.computeResults()
               if self.appModel.periodicExpenses.isEmpty {
-                self.periodicExpensesRefresh.toggle()
+                // Periodic expenses
+                self.textFieldRefresh[6].toggle()
               }
               if self.appModel.taxes.isEmpty {
-                self.taxesRefresh.toggle()
+                // Taxes
+                self.textFieldRefresh[7].toggle()
               }
             })
               .multilineTextAlignment(.trailing)
@@ -143,7 +153,7 @@ struct ContentView: View {
             NavigationLink(destination: PeriodicExpenses(appModel: $appModel)) {
               Text("Gastos periódicos")
                 .fixedSize()
-              TextField("0" + (periodicExpensesRefresh ? "" : " "), text: $appModel.periodicExpenses)
+              TextField("0" + (textFieldRefresh[6] ? "" : " "), text: $appModel.periodicExpenses)
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 27)
@@ -158,7 +168,7 @@ struct ContentView: View {
             NavigationLink(destination: TaxesView(appModel: $appModel)) {
               Text("Impuestos")
                 .fixedSize()
-              TextField("0" + (taxesRefresh ? "" : " "), text: $appModel.taxes)
+              TextField("0" + (textFieldRefresh[7] ? "" : " "), text: $appModel.taxes)
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 84)
@@ -194,14 +204,15 @@ struct ContentView: View {
             Text("Beneficio antes de impuestos")
               .fixedSize()
             Spacer()
-            Text("\(moneyToPay) €")
+            Text((!profitBeforeTaxesValue.isEmpty ? profitBeforeTaxesValue : "0") + " €")
               .fixedSize()
           }
           HStack {
             Text("Beneficio después de impuestos")
+              .font(.system(size: 15.5))
               .fixedSize()
             Spacer()
-            Text("\(moneyToPay) €")
+            Text((!profitAfterTaxesValue.isEmpty ? profitAfterTaxesValue : "0") + " €")
               .fixedSize()
           }
           HStack {
@@ -220,7 +231,7 @@ struct ContentView: View {
               )
             }
             Spacer()
-            Text("\(moneyToPay) €")
+            Text((!grossReturnValue.isEmpty ? grossReturnValue : "0") + " %")
               .fixedSize()
           }
           HStack {
@@ -239,7 +250,7 @@ struct ContentView: View {
               )
             }
             Spacer()
-            Text("\(moneyToPay) €")
+            Text((!netReturnValue.isEmpty ? netReturnValue : "0") + " %")
               .fixedSize()
           }
           HStack {
@@ -258,7 +269,7 @@ struct ContentView: View {
               )
             }
             Spacer()
-            Text("\(moneyToPay) €")
+            Text((!cashflowValue.isEmpty ? cashflowValue : "0") + " €")
               .fixedSize()
           }
           HStack {
@@ -277,7 +288,7 @@ struct ContentView: View {
               )
             }
             Spacer()
-            Text("\(moneyToPay) €")
+            Text((!roiValue.isEmpty ? roiValue : "0") + " %")
               .fixedSize()
           }
           HStack {
@@ -296,16 +307,29 @@ struct ContentView: View {
               )
             }
             Spacer()
-            Text("\(moneyToPay) €")
+            Text((!perValue.isEmpty ? perValue : "0") + " años")
               .fixedSize()
           }
         }
       }
       .navigationBarTitle(Text("Buy & Rent"), displayMode: .inline)
-      .onAppear {
-        self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
-        self.appModel.taxes = self.appModel.computeTaxes()
-        self.computeResults()
+      .navigationBarItems(leading: Button(action: {
+        self.reset()
+      }) {
+        Image(systemName: "trash.circle")
+        }, trailing: Button(action: {
+          self.showingAboutAlert.toggle()
+        }) {
+          Image(systemName: "info.circle")
+        }.alert(isPresented: $showingAboutAlert) {
+          Alert(title: Text("Buy & Rent"),
+                message: Text("Copyright 2020 - Óscar García Baro\nSugerencias y contacto en: ogbaro@gmail.com"),
+                dismissButton: .default(Text("Ok")))
+      })
+        .onAppear {
+          self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
+          self.appModel.taxes = self.appModel.computeTaxes()
+          self.computeResults()
       }
     }
   }
@@ -319,17 +343,47 @@ struct ContentView_Previews: PreviewProvider {
 
 extension ContentView {
   
+  func reset() {
+    appModel.reset()
+    // This is a work around in order to show the by default value in the textfields as
+    // in seems there is a bug on it
+    for i in 0..<textFieldRefresh.count {
+      textFieldRefresh[i].toggle()
+    }
+    computeResults()
+  }
+  
   func computeResults() {
     let totalProperty = appModel.buyValue +
       (CoreUtils.numberFormatter.number(from: appModel.buyExpenses)?.doubleValue ?? 0.0) +
       appModel.workExpenses +
       (CoreUtils.numberFormatter.number(from: appModel.mortgageExpenses)?.doubleValue ?? 0.0)
     totalPropertyValue = CoreUtils.textFieldFormattedValue(for: totalProperty, truncateDecimals: true)
+    
     let mortgageValue = appModel.mortgageValueString.isEmpty ? 0.0 : CoreUtils.numberFormatter.number(from: appModel.mortgageValueString)?.doubleValue ?? 0.0
     let moneyToSpendComputation = totalProperty - mortgageValue
     moneyToSpend = CoreUtils.textFieldFormattedValue(for: moneyToSpendComputation > 0.0 ? moneyToSpendComputation : 0.0, truncateDecimals: true)
     
-    // TODO: seguir calculando el beneficio antes de impuestos...
+    let profitBeforeTaxes = appModel.rentValue * 12.0 - (CoreUtils.numberFormatter.number(from: appModel.periodicExpenses)?.doubleValue ?? 0.0) * 12.0
+    profitBeforeTaxesValue = CoreUtils.textFieldFormattedValue(for: profitBeforeTaxes > 0.0 ? profitBeforeTaxes : 0.0, truncateDecimals: true)
+    
+    let profitAfterTaxes = profitBeforeTaxes - (CoreUtils.numberFormatter.number(from: appModel.taxes)?.doubleValue ?? 0.0)
+    profitAfterTaxesValue = CoreUtils.textFieldFormattedValue(for: profitAfterTaxes > 0.0 ? profitAfterTaxes : 0.0, truncateDecimals: true)
+    
+    let grossReturn = totalProperty > 0.0 ? ((appModel.rentValue * 12.0) / totalProperty) * 100.0 : 0.0
+    grossReturnValue = CoreUtils.textFieldFormattedValue(for: grossReturn, truncateDecimals: true)
+    
+    let netReturn = totalProperty > 0.0 ? (profitAfterTaxes / totalProperty) * 100.0 : 0.0
+    netReturnValue = CoreUtils.textFieldFormattedValue(for: netReturn, truncateDecimals: true)
+    
+    let cashflow = profitAfterTaxes - ((CoreUtils.numberFormatter.number(from: appModel.mortgageNote)?.doubleValue ?? 0.0) * 12.0)
+    cashflowValue = CoreUtils.textFieldFormattedValue(for: cashflow > 0.0 ? cashflow : 0.0, truncateDecimals: true)
+    
+    let roi = moneyToSpendComputation > 0.0 ? (cashflow / moneyToSpendComputation) * 100.0 : 0.0
+    roiValue = CoreUtils.textFieldFormattedValue(for: roi > 0.0 ? roi : 0.0, truncateDecimals: true)
+    
+    let per = appModel.rentValue > 0.0 ? totalProperty / (appModel.rentValue * 12.0) : 0.0
+    perValue = CoreUtils.textFieldFormattedValue(for: per > 0.0 ? per : 0.0, truncateDecimals: true)
   }
   
   var buyValueProxy: Binding<String> {

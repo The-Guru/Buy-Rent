@@ -37,6 +37,7 @@ struct AppModel {
   var mortgageOpenComission: Double = 0.0
   var mortgageRating: Double = 0.0
   var mortgageBrokerComission: Double = 0.0
+  var mortgageAJD: Double = 0.0
   // PeriodicExpenses
   var defaultInsurance: Double = 0.0
   var homeInsurance: Double = 0.0
@@ -55,6 +56,50 @@ struct AppModel {
   
   private let irpfRangeValues: [Double] = [0.19, 0.24, 0.30, 0.37, 0.45]
   
+  mutating func reset() {
+    buyValue = 0.0
+    buyExpenses = String()
+    workExpenses = 0.0
+    mortgageValueString = String()
+    mortgageExpenses = String()
+    rentValue = 0.0
+    periodicExpenses = String()
+    taxes = String()
+    mortgageNote = String()
+    // BuyExpenses
+    buyExpensesPercentage = 0.0
+    selectedExpensesComputation  = 0
+    notaryExpenses = 0.0
+    registryExpenses = 0.0
+    managementExpenses = 0.0
+    itpPercentage = 0.0
+    realStateCommission = 0.0
+    // MortgageExpenses
+    mortgageValue = 0.0
+    mortgagePercentage = 0.0
+    mortgageYears = 0.0
+    mortgagePercentageToggle = false
+    mortgageOpenComission = 0.0
+    mortgageRating = 0.0
+    mortgageBrokerComission = 0.0
+    mortgageAJD = 0.0
+    // PeriodicExpenses
+    defaultInsurance = 0.0
+    homeInsurance = 0.0
+    lifeInsurance = 0.0
+    communityValue = 0.0
+    ibiValue = 0.0
+    maintenanceValue = 0.0
+    emptySesonsValue = 0.0
+    // Taxes
+    irpfRange = 0
+    mainResidence = 0
+    landBuildingValue = 0.0
+    landGroundValue = 0.0
+    mortgageInterestString = String()
+    annualDepreciation = String()
+  }
+  
   func computeBuyExpenses() -> Double {
     let itpComputation = buyValue * itpPercentage / 100.0
     return notaryExpenses + registryExpenses + managementExpenses +
@@ -62,7 +107,7 @@ struct AppModel {
   }
   
   func computeMortgageExpenses() -> Double {
-    return mortgageOpenComission + mortgageRating + mortgageBrokerComission
+    return mortgageOpenComission + mortgageRating + mortgageBrokerComission + mortgageAJD
   }
   
   func computePeriodicExpenses() -> Double {
@@ -196,8 +241,8 @@ El flujo de caja en este caso es el beneficio neto después de haber pagado la d
   static let roiMessage = AlertMessage(title: "ROI", message: """
 El ROI o retorno sobre la inversión es un índice que permite calcular el rendimiento de una inversión. Mide el porcentaje de retorno que una inversión en un inmueble genera en un año.
 """)
-
-static let perMessage = AlertMessage(title: "PER", message: """
+  
+  static let perMessage = AlertMessage(title: "PER", message: """
 El PER equivale al número de veces que el precio de alquiler está contenido en el precio de venta o al número de años que tardaríamos en pagar el precio de un inmueble mediante el alquiler en las codiciones actuales.
 """)
 }
