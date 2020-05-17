@@ -28,13 +28,13 @@
 		ED453D0E24640F6F00F8BA32 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D0D24640F6F00F8BA32 /* AppDelegate.swift */; };
 		ED453D1024640F6F00F8BA32 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D0F24640F6F00F8BA32 /* SceneDelegate.swift */; };
 		ED453D1224640F6F00F8BA32 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D1124640F6F00F8BA32 /* ContentView.swift */; };
-		ED453D1424640F7500F8BA32 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED453D1324640F7500F8BA32 /* Assets.xcassets */; };
 		ED453D1724640F7600F8BA32 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED453D1624640F7600F8BA32 /* Preview Assets.xcassets */; };
 		ED453D1A24640F7600F8BA32 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ED453D1824640F7600F8BA32 /* LaunchScreen.storyboard */; };
 		ED453D252464512F00F8BA32 /* BuyExpenses.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D242464512F00F8BA32 /* BuyExpenses.swift */; };
 		ED453D272464542100F8BA32 /* MortgageExpenses.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D262464542100F8BA32 /* MortgageExpenses.swift */; };
 		ED453D292464587700F8BA32 /* PeriodicExpenses.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D282464587700F8BA32 /* PeriodicExpenses.swift */; };
 		ED453D2B2464594500F8BA32 /* TaxesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D2A2464594500F8BA32 /* TaxesView.swift */; };
+		ED936AF624719896009658EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED936AF524719895009658EB /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,7 +61,6 @@
 		ED453D0D24640F6F00F8BA32 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ED453D0F24640F6F00F8BA32 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		ED453D1124640F6F00F8BA32 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		ED453D1324640F7500F8BA32 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ED453D1624640F7600F8BA32 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		ED453D1924640F7600F8BA32 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ED453D1B24640F7600F8BA32 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -69,6 +68,7 @@
 		ED453D262464542100F8BA32 /* MortgageExpenses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MortgageExpenses.swift; sourceTree = "<group>"; };
 		ED453D282464587700F8BA32 /* PeriodicExpenses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodicExpenses.swift; sourceTree = "<group>"; };
 		ED453D2A2464594500F8BA32 /* TaxesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxesView.swift; sourceTree = "<group>"; };
+		ED936AF524719895009658EB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,7 +162,7 @@
 				ED453D0D24640F6F00F8BA32 /* AppDelegate.swift */,
 				ED453D0F24640F6F00F8BA32 /* SceneDelegate.swift */,
 				ED453D1124640F6F00F8BA32 /* ContentView.swift */,
-				ED453D1324640F7500F8BA32 /* Assets.xcassets */,
+				ED936AF524719895009658EB /* Assets.xcassets */,
 				ED453D1824640F7600F8BA32 /* LaunchScreen.storyboard */,
 				ED453D242464512F00F8BA32 /* BuyExpenses.swift */,
 				ED453D262464542100F8BA32 /* MortgageExpenses.swift */,
@@ -250,8 +250,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED453D1A24640F7600F8BA32 /* LaunchScreen.storyboard in Resources */,
+				ED936AF624719896009658EB /* Assets.xcassets in Resources */,
 				ED453D1724640F7600F8BA32 /* Preview Assets.xcassets in Resources */,
-				ED453D1424640F7500F8BA32 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
