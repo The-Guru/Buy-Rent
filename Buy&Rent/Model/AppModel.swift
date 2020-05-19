@@ -122,9 +122,9 @@ struct AppModel {
   
   func computeAnnualDepreciation() -> String {
     if landGroundValue > 0.0 && landBuildingValue > 0.0 {
-      let buyExpenses = CoreUtils.numberFormatter.number(from: self.buyExpenses) ?? 0.0
+      let buyExpenses = Double(self.buyExpenses) ?? 0.0
       let buildingPercentage = landBuildingValue / (landBuildingValue + landGroundValue)
-      let computation = 0.03 * (buildingPercentage * buyValue + buyExpenses.doubleValue + workExpenses)
+      let computation = 0.03 * (buildingPercentage * buyValue + buyExpenses + workExpenses)
       if computation > 0.0 {
         return CoreUtils.textFieldFormattedValue(for: computation, truncateDecimals: true)
       } else {
@@ -136,12 +136,12 @@ struct AppModel {
   }
   
   func computeTaxes() -> String {
-    let periodicExpenses = CoreUtils.numberFormatter.number(from: self.periodicExpenses) ?? 0.0
-    let depreciation = CoreUtils.numberFormatter.number(from: annualDepreciation) ?? 0.0
-    let mortgageInterest = CoreUtils.numberFormatter.number(from: mortgageInterestString) ?? 0.0
+    let periodicExpenses = Double(self.periodicExpenses) ?? 0.0
+    let depreciation = Double(annualDepreciation) ?? 0.0
+    let mortgageInterest = Double(mortgageInterestString) ?? 0.0
     
-    let profit = (rentValue * 12.0) - (periodicExpenses.doubleValue * 12.0)
-    let computation = profit - depreciation.doubleValue - mortgageInterest.doubleValue
+    let profit = (rentValue * 12.0) - (periodicExpenses * 12.0)
+    let computation = profit - depreciation - mortgageInterest
     let taxes = mainResidence == 0 ? computation * 0.4 * irpfRangeValues[irpfRange] : computation * irpfRangeValues[irpfRange]
     if taxes > 0.0 {
       return CoreUtils.textFieldFormattedValue(for: taxes, truncateDecimals: true)

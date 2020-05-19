@@ -114,7 +114,9 @@ struct PeriodicExpenses: View {
           .padding(.trailing, 30)
       }
     }
+    .padding([.leading, .trailing], 0.2)
     .navigationBarTitle(Text("Gastos del alquiler"), displayMode: .inline)
+    .keyboardObserving()
   }
 }
 
@@ -128,7 +130,7 @@ extension PeriodicExpenses {
   
   func updatePeriodicExpenses() {
     let totalPeriodicExpenses = self.appModel.computePeriodicExpenses()
-
+    
     if totalPeriodicExpenses > 0.0 {
       self.appModel.periodicExpenses = CoreUtils.textFieldFormattedValue(for: totalPeriodicExpenses, truncateDecimals: true)
     } else {

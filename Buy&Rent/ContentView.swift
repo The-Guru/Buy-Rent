@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import KeyboardObserving
 
 struct ContentView: View {
   
@@ -47,17 +48,21 @@ struct ContentView: View {
             TextField("0" + (textFieldRefresh[0] ? "" : " "), text: buyValueProxy, onEditingChanged: {
               if $0 {
                 self.buyValueProxy.wrappedValue = "0"
+                if self.appModel.mortgageValueString.isEmpty {
+                  self.textFieldRefresh[3].toggle()
+                }
+                if self.appModel.buyExpenses.isEmpty {
+                  self.textFieldRefresh[1].toggle()
+                }
               }
             }, onCommit: {
               self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
               self.appModel.taxes = self.appModel.computeTaxes()
               self.computeResults()
               if self.appModel.taxes.isEmpty {
-                // Taxes
                 self.textFieldRefresh[7].toggle()
               }
               if self.appModel.buyExpenses.isEmpty {
-                // Buy expenses
                 self.textFieldRefresh[1].toggle()
               }
             })
@@ -90,7 +95,6 @@ struct ContentView: View {
               self.appModel.taxes = self.appModel.computeTaxes()
               self.computeResults()
               if self.appModel.taxes.isEmpty {
-                // Taxes
                 self.textFieldRefresh[7].toggle()
               }
             })
@@ -136,11 +140,9 @@ struct ContentView: View {
               self.appModel.taxes = self.appModel.computeTaxes()
               self.computeResults()
               if self.appModel.periodicExpenses.isEmpty {
-                // Periodic expenses
                 self.textFieldRefresh[6].toggle()
               }
               if self.appModel.taxes.isEmpty {
-                // Taxes
                 self.textFieldRefresh[7].toggle()
               }
             })
@@ -311,7 +313,8 @@ struct ContentView: View {
               .fixedSize()
           }
         }
-      }
+      }  // Work around to use keyboardObserving in iPhone 11 Pro Max in landscape mode!
+      .padding([.leading, .trailing], 0.2)
       .navigationBarTitle(Text("Buy & Rent"), displayMode: .inline)
       .navigationBarItems(leading: Button(action: {
         self.reset()
@@ -323,7 +326,7 @@ struct ContentView: View {
           Image(systemName: "info.circle")
         }.alert(isPresented: $showingAboutAlert) {
           Alert(title: Text("Buy & Rent"),
-                message: Text("Copyright 2020 - Óscar García Baro\nSugerencias y contacto en: ogbaro@gmail.com"),
+                message: Text("Copyright 2020 - Óscar García Baro\nSugerencias y contacto ogbaro@gmail.com"),
                 dismissButton: .default(Text("Ok")))
       })
         .onAppear {
@@ -331,7 +334,9 @@ struct ContentView: View {
           self.appModel.taxes = self.appModel.computeTaxes()
           self.computeResults()
       }
+      .keyboardObserving()
     }
+    .navigationViewStyle(StackNavigationViewStyle())
   }
 }
 
@@ -354,20 +359,20 @@ extension ContentView {
   }
   
   func computeResults() {
-    let totalProperty = appModel.buyValue +
-      (CoreUtils.numberFormatter.number(from: appModel.buyExpenses)?.doubleValue ?? 0.0) +
+    let totalProperty = appModel.buyValue > 0.0 ? appModel.buyValue +
+      (Double(appModel.buyExpenses) ?? 0.0) +
       appModel.workExpenses +
-      (CoreUtils.numberFormatter.number(from: appModel.mortgageExpenses)?.doubleValue ?? 0.0)
+      (Double(appModel.mortgageExpenses) ?? 0.0) : 0.0
     totalPropertyValue = CoreUtils.textFieldFormattedValue(for: totalProperty, truncateDecimals: true)
     
-    let mortgageValue = appModel.mortgageValueString.isEmpty ? 0.0 : CoreUtils.numberFormatter.number(from: appModel.mortgageValueString)?.doubleValue ?? 0.0
+    let mortgageValue = Double(appModel.mortgageValueString) ?? 0.0
     let moneyToSpendComputation = totalProperty - mortgageValue
     moneyToSpend = CoreUtils.textFieldFormattedValue(for: moneyToSpendComputation > 0.0 ? moneyToSpendComputation : 0.0, truncateDecimals: true)
     
-    let profitBeforeTaxes = appModel.rentValue * 12.0 - (CoreUtils.numberFormatter.number(from: appModel.periodicExpenses)?.doubleValue ?? 0.0) * 12.0
+    let profitBeforeTaxes = appModel.rentValue * 12.0 - (Double(appModel.periodicExpenses) ?? 0.0) * 12.0
     profitBeforeTaxesValue = CoreUtils.textFieldFormattedValue(for: profitBeforeTaxes > 0.0 ? profitBeforeTaxes : 0.0, truncateDecimals: true)
     
-    let profitAfterTaxes = profitBeforeTaxes - (CoreUtils.numberFormatter.number(from: appModel.taxes)?.doubleValue ?? 0.0)
+    let profitAfterTaxes = profitBeforeTaxes - (Double(appModel.taxes) ?? 0.0)
     profitAfterTaxesValue = CoreUtils.textFieldFormattedValue(for: profitAfterTaxes > 0.0 ? profitAfterTaxes : 0.0, truncateDecimals: true)
     
     let grossReturn = totalProperty > 0.0 ? ((appModel.rentValue * 12.0) / totalProperty) * 100.0 : 0.0
@@ -376,7 +381,7 @@ extension ContentView {
     let netReturn = totalProperty > 0.0 ? (profitAfterTaxes / totalProperty) * 100.0 : 0.0
     netReturnValue = CoreUtils.textFieldFormattedValue(for: netReturn, truncateDecimals: true)
     
-    let cashflow = profitAfterTaxes - ((CoreUtils.numberFormatter.number(from: appModel.mortgageNote)?.doubleValue ?? 0.0) * 12.0)
+    let cashflow = profitAfterTaxes - ((Double(appModel.mortgageNote) ?? 0.0) * 12.0)
     cashflowValue = CoreUtils.textFieldFormattedValue(for: cashflow > 0.0 ? cashflow : 0.0, truncateDecimals: true)
     
     let roi = moneyToSpendComputation > 0.0 ? (cashflow / moneyToSpendComputation) * 100.0 : 0.0
@@ -424,6 +429,16 @@ extension ContentView {
         if self.appModel.mortgagePercentageToggle {
           let mortgageValue = self.appModel.buyValue * self.appModel.mortgageValue  / 100.0
           self.appModel.mortgageValueString = mortgageValue > 0.0 ? CoreUtils.textFieldFormattedValue(for: mortgageValue, truncateDecimals: true) : String()
+          // We have to recompute the mortgage note
+          if mortgageValue > 0.0 {
+            let mortgageMonths = self.appModel.mortgageYears * 12.0
+            let mortgagePercentagePerMonth = self.appModel.mortgagePercentage / 12.0
+            let mortgagePerMonth = mortgagePercentagePerMonth / 100.0
+            let mortgageNote = mortgageValue * mortgagePerMonth / (1.0 - pow(1.0 + mortgagePerMonth, -mortgageMonths))
+            self.appModel.mortgageNote = mortgageNote > 0.0 ? CoreUtils.textFieldFormattedValue(for: mortgageNote, truncateDecimals: true) : String()
+          } else {
+            self.appModel.mortgageNote = String()
+          }
         }
     })
   }

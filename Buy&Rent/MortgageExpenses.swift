@@ -145,10 +145,12 @@ struct MortgageExpenses: View {
         }
       }
     }
+    .padding([.leading, .trailing], 0.2)
     .navigationBarTitle(Text("Hipoteca"), displayMode: .inline)
     .onAppear {
       self.computeMortgage()
     }
+    .keyboardObserving()
   }
   
   struct MortgageExpenses_Previews: PreviewProvider {

@@ -135,10 +135,12 @@ struct BuyExpenses: View {
         }
       }
     }
+    .padding([.leading, .trailing], 0.2)
     .navigationBarTitle(Text("Gastos de la compra"), displayMode: .inline)
     .onDisappear {
       self.updateBuyExpenses(percentage: self.appModel.selectedExpensesComputation == 0)
     }
+    .keyboardObserving()
   }
   
   struct BuyExpenses_Previews: PreviewProvider {
