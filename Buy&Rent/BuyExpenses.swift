@@ -135,7 +135,6 @@ struct BuyExpenses: View {
         }
       }
     }
-    .padding([.leading, .trailing], 0.2)
     .navigationBarTitle(Text("Gastos de la compra"), displayMode: .inline)
     .onDisappear {
       self.updateBuyExpenses(percentage: self.appModel.selectedExpensesComputation == 0)
@@ -162,8 +161,8 @@ extension BuyExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.buyExpensesPercentage = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.buyExpensesPercentage = value < 0.0 ? 0.0 : value
         }
     })
   }
@@ -178,8 +177,8 @@ extension BuyExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.notaryExpenses = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.notaryExpenses = value < 0.0 ? 0.0 : value
         }
     })
   }
@@ -194,8 +193,8 @@ extension BuyExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.registryExpenses = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.registryExpenses = value < 0.0 ? 0.0 : value
         }
     })
   }
@@ -210,8 +209,8 @@ extension BuyExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.managementExpenses = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.managementExpenses = value < 0.0 ? 0.0 : value
         }
     })
   }
@@ -226,8 +225,8 @@ extension BuyExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.itpPercentage = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.itpPercentage = value < 0.0 ? 0.0 : value
         }
     })
   }
@@ -242,8 +241,8 @@ extension BuyExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.realStateCommission = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.realStateCommission = value < 0.0 ? 0.0 : value
         }
     })
   }

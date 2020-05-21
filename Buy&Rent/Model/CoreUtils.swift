@@ -9,8 +9,6 @@
 import Foundation
 
 class CoreUtils {
-  
-  static let numberFormatter = NumberFormatter()
    
   static func textFieldFormattedValue(for value: Double, truncateDecimals: Bool) -> String {
      let isInteger = floor(value) == value

@@ -145,7 +145,6 @@ struct MortgageExpenses: View {
         }
       }
     }
-    .padding([.leading, .trailing], 0.2)
     .navigationBarTitle(Text("Hipoteca"), displayMode: .inline)
     .onAppear {
       self.computeMortgage()
@@ -239,8 +238,8 @@ extension MortgageExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.mortgageValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.mortgageValue = value < 0.0 ? 0.0 : value
           self.computeMortgage()
         }
     })
@@ -256,8 +255,8 @@ extension MortgageExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.mortgagePercentage = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.mortgagePercentage = value < 0.0 ? 0.0 : value
           self.computeMortgage()
         }
     })
@@ -273,8 +272,8 @@ extension MortgageExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.mortgageYears = value.doubleValue < 0.0 ? 0.0 : value.doubleValue.rounded()  // Avoiding decimals in years
+        if let value = Double($0) {
+          self.appModel.mortgageYears = value < 0.0 ? 0.0 : value.rounded()  // Avoiding decimals in years
           self.computeMortgage()
         }
     })
@@ -290,8 +289,8 @@ extension MortgageExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.mortgageOpenComission = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.mortgageOpenComission = value < 0.0 ? 0.0 : value
           self.updateMortgageExpenses()
         }
     })
@@ -307,8 +306,8 @@ extension MortgageExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.mortgageRating = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.mortgageRating = value < 0.0 ? 0.0 : value
           self.updateMortgageExpenses()
         }
     })
@@ -324,8 +323,8 @@ extension MortgageExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.mortgageBrokerComission = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.mortgageBrokerComission = value < 0.0 ? 0.0 : value
           self.updateMortgageExpenses()
         }
     })
@@ -341,8 +340,8 @@ extension MortgageExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.mortgageAJD = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.mortgageAJD = value < 0.0 ? 0.0 : value
           self.updateMortgageExpenses()
         }
     })

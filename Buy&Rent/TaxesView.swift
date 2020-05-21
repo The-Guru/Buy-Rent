@@ -194,7 +194,6 @@ struct TaxesView: View {
         }
       }
     }
-    .padding([.leading, .trailing], 0.2)
     .navigationBarTitle(Text("Impuestos"), displayMode: .inline)
     .onAppear {
       self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
@@ -222,8 +221,8 @@ extension TaxesView {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.landBuildingValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.landBuildingValue = value < 0.0 ? 0.0 : value
           self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
         }
     })
@@ -239,8 +238,8 @@ extension TaxesView {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.landGroundValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.landGroundValue = value < 0.0 ? 0.0 : value
           self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
         }
     })

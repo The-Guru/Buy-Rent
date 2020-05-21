@@ -114,7 +114,6 @@ struct PeriodicExpenses: View {
           .padding(.trailing, 30)
       }
     }
-    .padding([.leading, .trailing], 0.2)
     .navigationBarTitle(Text("Gastos del alquiler"), displayMode: .inline)
     .keyboardObserving()
   }
@@ -148,8 +147,8 @@ extension PeriodicExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.defaultInsurance = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.defaultInsurance = value < 0.0 ? 0.0 : value
           self.updatePeriodicExpenses()
         }
     })
@@ -165,8 +164,8 @@ extension PeriodicExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.homeInsurance = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.homeInsurance = value < 0.0 ? 0.0 : value
           self.updatePeriodicExpenses()
         }
     })
@@ -182,8 +181,8 @@ extension PeriodicExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.lifeInsurance = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.lifeInsurance = value < 0.0 ? 0.0 : value
           self.updatePeriodicExpenses()
         }
     })
@@ -199,8 +198,8 @@ extension PeriodicExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.communityValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.communityValue = value < 0.0 ? 0.0 : value
           self.updatePeriodicExpenses()
         }
     })
@@ -216,8 +215,8 @@ extension PeriodicExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.ibiValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.ibiValue = value < 0.0 ? 0.0 : value
           self.updatePeriodicExpenses()
         }
     })
@@ -233,8 +232,8 @@ extension PeriodicExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.maintenanceValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.maintenanceValue = value < 0.0 ? 0.0 : value
           self.updatePeriodicExpenses()
         }
     })
@@ -250,8 +249,8 @@ extension PeriodicExpenses {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.emptySesonsValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.emptySesonsValue = value < 0.0 ? 0.0 : value
           self.updatePeriodicExpenses()
         }
     })

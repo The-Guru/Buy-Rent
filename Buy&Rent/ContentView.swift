@@ -8,6 +8,7 @@
 
 import SwiftUI
 import KeyboardObserving
+import GoogleMobileAds
 
 struct ContentView: View {
   
@@ -39,304 +40,308 @@ struct ContentView: View {
   }
   
   var body: some View {
-    NavigationView {
-      Form {
-        Section(header: Text("Compra del inmueble")) {
-          HStack {
-            Text("Importe de la compra")
-              .fixedSize()
-            TextField("0" + (textFieldRefresh[0] ? "" : " "), text: buyValueProxy, onEditingChanged: {
-              if $0 {
-                self.buyValueProxy.wrappedValue = "0"
-                if self.appModel.mortgageValueString.isEmpty {
-                  self.textFieldRefresh[3].toggle()
+    VStack {
+      NavigationView {
+        
+        Form {
+          Section(header: Text("Compra del inmueble")) {
+            HStack {
+              Text("Importe de la compra")
+                .fixedSize()
+              TextField("0" + (textFieldRefresh[0] ? "" : " "), text: buyValueProxy, onEditingChanged: {
+                if $0 {
+                  self.buyValueProxy.wrappedValue = "0"
+                  if self.appModel.mortgageValueString.isEmpty {
+                    self.textFieldRefresh[3].toggle()
+                  }
+                  if self.appModel.buyExpenses.isEmpty {
+                    self.textFieldRefresh[1].toggle()
+                  }
+                }
+              }, onCommit: {
+                self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
+                self.appModel.taxes = self.appModel.computeTaxes()
+                self.computeResults()
+                if self.appModel.taxes.isEmpty {
+                  self.textFieldRefresh[7].toggle()
                 }
                 if self.appModel.buyExpenses.isEmpty {
                   self.textFieldRefresh[1].toggle()
                 }
-              }
-            }, onCommit: {
-              self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
-              self.appModel.taxes = self.appModel.computeTaxes()
-              self.computeResults()
-              if self.appModel.taxes.isEmpty {
-                self.textFieldRefresh[7].toggle()
-              }
-              if self.appModel.buyExpenses.isEmpty {
-                self.textFieldRefresh[1].toggle()
-              }
-            })
-              .multilineTextAlignment(.trailing)
-              .textFieldStyle(RoundedBorderTextFieldStyle())
-            Text("€")
-          }
-          HStack {
-            NavigationLink(destination: BuyExpenses(appModel: $appModel)) {
-              Text("Gastos de la compra")
-                .fixedSize()
-              TextField("0" + (textFieldRefresh[1] ? "" : " "), text: $appModel.buyExpenses)
+              })
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.leading, 7)
+              Text("€")
+            }
+            HStack {
+              NavigationLink(destination: BuyExpenses(appModel: $appModel)) {
+                Text("Gastos de la compra")
+                  .fixedSize()
+                TextField("0" + (textFieldRefresh[1] ? "" : " "), text: $appModel.buyExpenses)
+                  .multilineTextAlignment(.trailing)
+                  .textFieldStyle(RoundedBorderTextFieldStyle())
+                  .padding(.leading, 7)
+                  .disabled(true)
+                Text("€")
+              }
+            }
+            HStack {
+              Text("Reforma")
+                .fixedSize()
+                .padding(.trailing, 100)
+              TextField("0" + (textFieldRefresh[2] ? "" : " "), text: workExpensesProxy, onEditingChanged: {
+                if $0 {
+                  self.workExpensesProxy.wrappedValue = "0"
+                }
+              }, onCommit: {
+                self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
+                self.appModel.taxes = self.appModel.computeTaxes()
+                self.computeResults()
+                if self.appModel.taxes.isEmpty {
+                  self.textFieldRefresh[7].toggle()
+                }
+              })
+                .multilineTextAlignment(.trailing)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+              Text("€")
+            }
+          }
+          
+          Section(header: Text("Hipoteca")) {
+            HStack {
+              NavigationLink(destination: MortgageExpenses(appModel: $appModel)) {
+                Text("Importe del préstamo")
+                  .fixedSize()
+                TextField("0" + (textFieldRefresh[3] ? "" : " "), text: $appModel.mortgageValueString)
+                  .multilineTextAlignment(.trailing)
+                  .textFieldStyle(RoundedBorderTextFieldStyle())
+                  .padding(.leading, 1)
+                  .disabled(true)
+                Text("€")
+              }
+            }
+            HStack {
+              Text("Gastos de la hipoteca")
+                .fixedSize()
+              TextField("0" + (textFieldRefresh[4] ? "" : " "), text: $appModel.mortgageExpenses)
+                .multilineTextAlignment(.trailing)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
                 .disabled(true)
               Text("€")
             }
           }
-          HStack {
-            Text("Reforma")
-              .fixedSize()
-              .padding(.trailing, 100)
-            TextField("0" + (textFieldRefresh[2] ? "" : " "), text: workExpensesProxy, onEditingChanged: {
-              if $0 {
-                self.workExpensesProxy.wrappedValue = "0"
-              }
-            }, onCommit: {
-              self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
-              self.appModel.taxes = self.appModel.computeTaxes()
-              self.computeResults()
-              if self.appModel.taxes.isEmpty {
-                self.textFieldRefresh[7].toggle()
-              }
-            })
-              .multilineTextAlignment(.trailing)
-              .textFieldStyle(RoundedBorderTextFieldStyle())
-            Text("€")
-          }
-        }
-        
-        Section(header: Text("Hipoteca")) {
-          HStack {
-            NavigationLink(destination: MortgageExpenses(appModel: $appModel)) {
-              Text("Importe del préstamo")
+          
+          Section(header: Text("Alquiler")) {
+            HStack {
+              Text("Importe del alquiler")
                 .fixedSize()
-              TextField("0" + (textFieldRefresh[3] ? "" : " "), text: $appModel.mortgageValueString)
+              TextField("0" + (textFieldRefresh[5] ? "" : " "), text: rentValueProxy, onEditingChanged: {
+                if $0 {
+                  self.rentValueProxy.wrappedValue = "0"
+                }
+              }, onCommit: {
+                self.appModel.taxes = self.appModel.computeTaxes()
+                self.computeResults()
+                if self.appModel.periodicExpenses.isEmpty {
+                  self.textFieldRefresh[6].toggle()
+                }
+                if self.appModel.taxes.isEmpty {
+                  self.textFieldRefresh[7].toggle()
+                }
+              })
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.leading, 1)
-                .disabled(true)
-              Text("€")
-            }
-          }
-          HStack {
-            Text("Gastos de la hipoteca")
-              .fixedSize()
-            TextField("0" + (textFieldRefresh[4] ? "" : " "), text: $appModel.mortgageExpenses)
-              .multilineTextAlignment(.trailing)
-              .textFieldStyle(RoundedBorderTextFieldStyle())
-              .disabled(true)
-            Text("€")
-          }
-        }
-        
-        Section(header: Text("Alquiler")) {
-          HStack {
-            Text("Importe del alquiler")
-              .fixedSize()
-            TextField("0" + (textFieldRefresh[5] ? "" : " "), text: rentValueProxy, onEditingChanged: {
-              if $0 {
-                self.rentValueProxy.wrappedValue = "0"
-              }
-            }, onCommit: {
-              self.appModel.taxes = self.appModel.computeTaxes()
-              self.computeResults()
-              if self.appModel.periodicExpenses.isEmpty {
-                self.textFieldRefresh[6].toggle()
-              }
-              if self.appModel.taxes.isEmpty {
-                self.textFieldRefresh[7].toggle()
-              }
-            })
-              .multilineTextAlignment(.trailing)
-              .textFieldStyle(RoundedBorderTextFieldStyle())
-              .padding(.leading, 18)
-            Text("€/mes")
-          }
-          HStack {
-            NavigationLink(destination: PeriodicExpenses(appModel: $appModel)) {
-              Text("Gastos periódicos")
-                .fixedSize()
-              TextField("0" + (textFieldRefresh[6] ? "" : " "), text: $appModel.periodicExpenses)
-                .multilineTextAlignment(.trailing)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.leading, 27)
-                .disabled(true)
+                .padding(.leading, 18)
               Text("€/mes")
             }
+            HStack {
+              NavigationLink(destination: PeriodicExpenses(appModel: $appModel)) {
+                Text("Gastos periódicos")
+                  .fixedSize()
+                TextField("0" + (textFieldRefresh[6] ? "" : " "), text: $appModel.periodicExpenses)
+                  .multilineTextAlignment(.trailing)
+                  .textFieldStyle(RoundedBorderTextFieldStyle())
+                  .padding(.leading, 27)
+                  .disabled(true)
+                Text("€/mes")
+              }
+            }
           }
-        }
-        
-        Section(header: Text("Impuestos")) {
-          HStack {
-            NavigationLink(destination: TaxesView(appModel: $appModel)) {
-              Text("Impuestos")
+          
+          Section(header: Text("Impuestos")) {
+            HStack {
+              NavigationLink(destination: TaxesView(appModel: $appModel)) {
+                Text("Impuestos")
+                  .fixedSize()
+                TextField("0" + (textFieldRefresh[7] ? "" : " "), text: $appModel.taxes)
+                  .multilineTextAlignment(.trailing)
+                  .textFieldStyle(RoundedBorderTextFieldStyle())
+                  .padding(.leading, 84)
+                  .disabled(true)
+                Text("€/año")
+              }
+            }
+          }
+          
+          Section(header: Text("Resultados")) {
+            HStack {
+              Text("Importe total del inmueble")
                 .fixedSize()
-              TextField("0" + (textFieldRefresh[7] ? "" : " "), text: $appModel.taxes)
-                .multilineTextAlignment(.trailing)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.leading, 84)
-                .disabled(true)
-              Text("€/año")
+              Spacer()
+              Text((!totalPropertyValue.isEmpty ? totalPropertyValue : "0") + " €")
+                .fixedSize()
+            }
+            HStack {
+              Text("Capital a aportar")
+                .fixedSize()
+              Spacer()
+              Text((!moneyToSpend.isEmpty ? moneyToSpend : "0") + " €")
+                .fixedSize()
+            }
+            HStack {
+              Text("Letra hipotecaria")
+                .fixedSize()
+              Spacer()
+              Text((!appModel.mortgageNote.isEmpty ? appModel.mortgageNote : "0") + " €/mes")
+                .fixedSize()
+            }
+            HStack {
+              Text("Beneficio antes de impuestos")
+                .fixedSize()
+              Spacer()
+              Text((!profitBeforeTaxesValue.isEmpty ? profitBeforeTaxesValue : "0") + " €")
+                .fixedSize()
+            }
+            HStack {
+              Text("Beneficio después de impuestos")
+                .font(.system(size: 15.5))
+                .fixedSize()
+              Spacer()
+              Text((!profitAfterTaxesValue.isEmpty ? profitAfterTaxesValue : "0") + " €")
+                .fixedSize()
+            }
+            HStack {
+              Text("Rentabilidad bruta")
+                .fixedSize()
+              Button(action: {
+                self.grossReturnMessage = TaxMessages.grossReturnMessage
+              }) {
+                Image(systemName: "info.circle")
+              }
+              .alert(item: $grossReturnMessage) { message in
+                Alert(
+                  title: Text(message.title),
+                  message: Text(message.message),
+                  dismissButton: .default(Text("Ok"))
+                )
+              }
+              Spacer()
+              Text((!grossReturnValue.isEmpty ? grossReturnValue : "0") + " %")
+                .fixedSize()
+            }
+            HStack {
+              Text("Rentabilidad neta")
+                .fixedSize()
+              Button(action: {
+                self.netReturnMessage = TaxMessages.netReturnMessage
+              }) {
+                Image(systemName: "info.circle")
+              }
+              .alert(item: $netReturnMessage) { message in
+                Alert(
+                  title: Text(message.title),
+                  message: Text(message.message),
+                  dismissButton: .default(Text("Ok"))
+                )
+              }
+              Spacer()
+              Text((!netReturnValue.isEmpty ? netReturnValue : "0") + " %")
+                .fixedSize()
+            }
+            HStack {
+              Text("Cashflow")
+                .fixedSize()
+              Button(action: {
+                self.cashflowMessage = TaxMessages.cashflowMessage
+              }) {
+                Image(systemName: "info.circle")
+              }
+              .alert(item: $cashflowMessage) { message in
+                Alert(
+                  title: Text(message.title),
+                  message: Text(message.message),
+                  dismissButton: .default(Text("Ok"))
+                )
+              }
+              Spacer()
+              Text((!cashflowValue.isEmpty ? cashflowValue : "0") + " €")
+                .fixedSize()
+            }
+            HStack {
+              Text("ROI. Retorno de la inversión")
+                .fixedSize()
+              Button(action: {
+                self.roiMessage = TaxMessages.roiMessage
+              }) {
+                Image(systemName: "info.circle")
+              }
+              .alert(item: $roiMessage) { message in
+                Alert(
+                  title: Text(message.title),
+                  message: Text(message.message),
+                  dismissButton: .default(Text("Ok"))
+                )
+              }
+              Spacer()
+              Text((!roiValue.isEmpty ? roiValue : "0") + " %")
+                .fixedSize()
+            }
+            HStack {
+              Text("PER. Relación precio/beneficio")
+                .fixedSize()
+              Button(action: {
+                self.perMessage = TaxMessages.perMessage
+              }) {
+                Image(systemName: "info.circle")
+              }
+              .alert(item: $perMessage) { message in
+                Alert(
+                  title: Text(message.title),
+                  message: Text(message.message),
+                  dismissButton: .default(Text("Ok"))
+                )
+              }
+              Spacer()
+              Text((!perValue.isEmpty ? perValue : "0") + " años")
+                .fixedSize()
             }
           }
         }
-        
-        Section(header: Text("Resultados")) {
-          HStack {
-            Text("Importe total del inmueble")
-              .fixedSize()
-            Spacer()
-            Text((!totalPropertyValue.isEmpty ? totalPropertyValue : "0") + " €")
-              .fixedSize()
-          }
-          HStack {
-            Text("Capital a aportar")
-              .fixedSize()
-            Spacer()
-            Text((!moneyToSpend.isEmpty ? moneyToSpend : "0") + " €")
-              .fixedSize()
-          }
-          HStack {
-            Text("Letra hipotecaria")
-              .fixedSize()
-            Spacer()
-            Text((!appModel.mortgageNote.isEmpty ? appModel.mortgageNote : "0") + " €/mes")
-              .fixedSize()
-          }
-          HStack {
-            Text("Beneficio antes de impuestos")
-              .fixedSize()
-            Spacer()
-            Text((!profitBeforeTaxesValue.isEmpty ? profitBeforeTaxesValue : "0") + " €")
-              .fixedSize()
-          }
-          HStack {
-            Text("Beneficio después de impuestos")
-              .font(.system(size: 15.5))
-              .fixedSize()
-            Spacer()
-            Text((!profitAfterTaxesValue.isEmpty ? profitAfterTaxesValue : "0") + " €")
-              .fixedSize()
-          }
-          HStack {
-            Text("Rentabilidad bruta")
-              .fixedSize()
-            Button(action: {
-              self.grossReturnMessage = TaxMessages.grossReturnMessage
-            }) {
-              Image(systemName: "info.circle")
-            }
-            .alert(item: $grossReturnMessage) { message in
-              Alert(
-                title: Text(message.title),
-                message: Text(message.message),
-                dismissButton: .default(Text("Ok"))
-              )
-            }
-            Spacer()
-            Text((!grossReturnValue.isEmpty ? grossReturnValue : "0") + " %")
-              .fixedSize()
-          }
-          HStack {
-            Text("Rentabilidad neta")
-              .fixedSize()
-            Button(action: {
-              self.netReturnMessage = TaxMessages.netReturnMessage
-            }) {
-              Image(systemName: "info.circle")
-            }
-            .alert(item: $netReturnMessage) { message in
-              Alert(
-                title: Text(message.title),
-                message: Text(message.message),
-                dismissButton: .default(Text("Ok"))
-              )
-            }
-            Spacer()
-            Text((!netReturnValue.isEmpty ? netReturnValue : "0") + " %")
-              .fixedSize()
-          }
-          HStack {
-            Text("Cashflow")
-              .fixedSize()
-            Button(action: {
-              self.cashflowMessage = TaxMessages.cashflowMessage
-            }) {
-              Image(systemName: "info.circle")
-            }
-            .alert(item: $cashflowMessage) { message in
-              Alert(
-                title: Text(message.title),
-                message: Text(message.message),
-                dismissButton: .default(Text("Ok"))
-              )
-            }
-            Spacer()
-            Text((!cashflowValue.isEmpty ? cashflowValue : "0") + " €")
-              .fixedSize()
-          }
-          HStack {
-            Text("ROI. Retorno de la inversión")
-              .fixedSize()
-            Button(action: {
-              self.roiMessage = TaxMessages.roiMessage
-            }) {
-              Image(systemName: "info.circle")
-            }
-            .alert(item: $roiMessage) { message in
-              Alert(
-                title: Text(message.title),
-                message: Text(message.message),
-                dismissButton: .default(Text("Ok"))
-              )
-            }
-            Spacer()
-            Text((!roiValue.isEmpty ? roiValue : "0") + " %")
-              .fixedSize()
-          }
-          HStack {
-            Text("PER. Relación precio/beneficio")
-              .fixedSize()
-            Button(action: {
-              self.perMessage = TaxMessages.perMessage
-            }) {
-              Image(systemName: "info.circle")
-            }
-            .alert(item: $perMessage) { message in
-              Alert(
-                title: Text(message.title),
-                message: Text(message.message),
-                dismissButton: .default(Text("Ok"))
-              )
-            }
-            Spacer()
-            Text((!perValue.isEmpty ? perValue : "0") + " años")
-              .fixedSize()
-          }
-        }
-      }  // Work around to use keyboardObserving in iPhone 11 Pro Max in landscape mode!
-      .padding([.leading, .trailing], 0.2)
-      .navigationBarTitle(Text("Buy & Rent"), displayMode: .inline)
-      .navigationBarItems(leading: Button(action: {
-        self.reset()
-      }) {
-        Image(systemName: "trash.circle")
-        }, trailing: Button(action: {
-          self.showingAboutAlert.toggle()
+        .navigationBarTitle(Text("Buy & Rent"), displayMode: .inline)
+        .navigationBarItems(leading: Button(action: {
+          self.reset()
         }) {
-          Image(systemName: "info.circle")
-        }.alert(isPresented: $showingAboutAlert) {
-          Alert(title: Text("Buy & Rent"),
-                message: Text("Copyright 2020 - Óscar García Baro\nSugerencias y contacto ogbaro@gmail.com"),
-                dismissButton: .default(Text("Ok")))
-      })
-        .onAppear {
-          self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
-          self.appModel.taxes = self.appModel.computeTaxes()
-          self.computeResults()
+          Image(systemName: "trash.circle")
+          }, trailing: Button(action: {
+            self.showingAboutAlert.toggle()
+          }) {
+            Image(systemName: "info.circle")
+          }.alert(isPresented: $showingAboutAlert) {
+            Alert(title: Text("Buy & Rent"),
+                  message: Text("Copyright 2020 - Óscar García Baro\nSugerencias y contacto ogbaro@gmail.com"),
+                  dismissButton: .default(Text("Ok")))
+        })
+          .onAppear {
+            self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
+            self.appModel.taxes = self.appModel.computeTaxes()
+            self.computeResults()
+        }
+        .keyboardObserving()
       }
-      .keyboardObserving()
+      .navigationViewStyle(StackNavigationViewStyle())
+      Spacer()
+      BannerViewController().frame(width: kGADAdSizeBanner.size.width, height: kGADAdSizeBanner.size.height, alignment: .center)
     }
-    .navigationViewStyle(StackNavigationViewStyle())
   }
 }
 
@@ -401,8 +406,8 @@ extension ContentView {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.buyValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.buyValue = value < 0.0 ? 0.0 : value
           if self.appModel.selectedExpensesComputation == 0 {
             if self.appModel.buyValue > 0.0 {
               if self.appModel.buyExpensesPercentage > 0.0 {
@@ -453,8 +458,8 @@ extension ContentView {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.workExpenses = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.workExpenses = value < 0.0 ? 0.0 : value
         }
     })
   }
@@ -469,8 +474,8 @@ extension ContentView {
         }
     },
       set: {
-        if let value = CoreUtils.numberFormatter.number(from: $0) {
-          self.appModel.rentValue = value.doubleValue < 0.0 ? 0.0 : value.doubleValue
+        if let value = Double($0) {
+          self.appModel.rentValue = value < 0.0 ? 0.0 : value
           let totalPeriodicExpenses = self.appModel.computePeriodicExpenses()
           if totalPeriodicExpenses > 0.0 {
             self.appModel.periodicExpenses = CoreUtils.textFieldFormattedValue(for: totalPeriodicExpenses, truncateDecimals: true)
