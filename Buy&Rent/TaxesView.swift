@@ -199,7 +199,6 @@ struct TaxesView: View {
       self.appModel.annualDepreciation = self.appModel.computeAnnualDepreciation()
       self.appModel.taxes = self.appModel.computeTaxes()
     }
-    .keyboardObserving()
   }
   
   struct TaxesView_Previews: PreviewProvider {

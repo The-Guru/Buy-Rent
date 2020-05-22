@@ -139,7 +139,6 @@ struct BuyExpenses: View {
     .onDisappear {
       self.updateBuyExpenses(percentage: self.appModel.selectedExpensesComputation == 0)
     }
-    .keyboardObserving()
   }
   
   struct BuyExpenses_Previews: PreviewProvider {

@@ -20,8 +20,8 @@
 		ED453D272464542100F8BA32 /* MortgageExpenses.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D262464542100F8BA32 /* MortgageExpenses.swift */; };
 		ED453D292464587700F8BA32 /* PeriodicExpenses.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D282464587700F8BA32 /* PeriodicExpenses.swift */; };
 		ED453D2B2464594500F8BA32 /* TaxesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D2A2464594500F8BA32 /* TaxesView.swift */; };
+		ED792D2B2477D4210086F102 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = ED792D2A2477D4210086F102 /* IQKeyboardManagerSwift */; };
 		ED936AF624719896009658EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED936AF524719895009658EB /* Assets.xcassets */; };
-		ED936B022472F569009658EB /* KeyboardObserving in Frameworks */ = {isa = PBXBuildFile; productRef = ED936B012472F569009658EB /* KeyboardObserving */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,8 +50,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ED936B022472F569009658EB /* KeyboardObserving in Frameworks */,
 				368404F057CDCC093FCFB52C /* Pods_Buy_Rent.framework in Frameworks */,
+				ED792D2B2477D4210086F102 /* IQKeyboardManagerSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,7 +149,7 @@
 			);
 			name = "Buy&Rent";
 			packageProductDependencies = (
-				ED936B012472F569009658EB /* KeyboardObserving */,
+				ED792D2A2477D4210086F102 /* IQKeyboardManagerSwift */,
 			);
 			productName = "Buy&Rent";
 			productReference = ED453D0A24640F6F00F8BA32 /* Buy & Rent.app */;
@@ -180,7 +180,7 @@
 			);
 			mainGroup = ED453D0124640F6F00F8BA32;
 			packageReferences = (
-				ED936B002472F568009658EB /* XCRemoteSwiftPackageReference "KeyboardObserving" */,
+				ED792D292477D4210086F102 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
 			);
 			productRefGroup = ED453D0B24640F6F00F8BA32 /* Products */;
 			projectDirPath = "";
@@ -462,21 +462,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		ED936B002472F568009658EB /* XCRemoteSwiftPackageReference "KeyboardObserving" */ = {
+		ED792D292477D4210086F102 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/nickffox/KeyboardObserving";
+			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.5.5;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		ED936B012472F569009658EB /* KeyboardObserving */ = {
+		ED792D2A2477D4210086F102 /* IQKeyboardManagerSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ED936B002472F568009658EB /* XCRemoteSwiftPackageReference "KeyboardObserving" */;
-			productName = KeyboardObserving;
+			package = ED792D292477D4210086F102 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
+			productName = IQKeyboardManagerSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

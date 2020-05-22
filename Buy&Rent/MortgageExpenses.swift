@@ -149,7 +149,6 @@ struct MortgageExpenses: View {
     .onAppear {
       self.computeMortgage()
     }
-    .keyboardObserving()
   }
   
   struct MortgageExpenses_Previews: PreviewProvider {

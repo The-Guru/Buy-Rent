@@ -115,7 +115,6 @@ struct PeriodicExpenses: View {
       }
     }
     .navigationBarTitle(Text("Gastos del alquiler"), displayMode: .inline)
-    .keyboardObserving()
   }
 }
 

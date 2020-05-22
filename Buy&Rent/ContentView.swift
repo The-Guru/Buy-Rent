@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import KeyboardObserving
 import GoogleMobileAds
 
 struct ContentView: View {
@@ -42,7 +41,6 @@ struct ContentView: View {
   var body: some View {
     VStack {
       NavigationView {
-        
         Form {
           Section(header: Text("Compra del inmueble")) {
             HStack {
@@ -336,7 +334,6 @@ struct ContentView: View {
             self.appModel.taxes = self.appModel.computeTaxes()
             self.computeResults()
         }
-        .keyboardObserving()
       }
       .navigationViewStyle(StackNavigationViewStyle())
       Spacer()
@@ -386,11 +383,13 @@ extension ContentView {
     let netReturn = totalProperty > 0.0 ? (profitAfterTaxes / totalProperty) * 100.0 : 0.0
     netReturnValue = CoreUtils.textFieldFormattedValue(for: netReturn, truncateDecimals: true)
     
+    // Cashflow could be a negative number
     let cashflow = profitAfterTaxes - ((Double(appModel.mortgageNote) ?? 0.0) * 12.0)
-    cashflowValue = CoreUtils.textFieldFormattedValue(for: cashflow > 0.0 ? cashflow : 0.0, truncateDecimals: true)
+    cashflowValue = CoreUtils.textFieldFormattedValue(for: cashflow, truncateDecimals: true)
     
+    // ROI could be a negative number
     let roi = moneyToSpendComputation > 0.0 ? (cashflow / moneyToSpendComputation) * 100.0 : 0.0
-    roiValue = CoreUtils.textFieldFormattedValue(for: roi > 0.0 ? roi : 0.0, truncateDecimals: true)
+    roiValue = CoreUtils.textFieldFormattedValue(for: roi, truncateDecimals: true)
     
     let per = appModel.rentValue > 0.0 ? totalProperty / (appModel.rentValue * 12.0) : 0.0
     perValue = CoreUtils.textFieldFormattedValue(for: per > 0.0 ? per : 0.0, truncateDecimals: true)
