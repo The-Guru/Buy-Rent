@@ -9,3 +9,5 @@ The app uses several controls of SwiftUI:
 * Picker
 
 Also the app implements an Admob banner using UIViewControllerRepresentable.
+Some screenshots of the app:
+
