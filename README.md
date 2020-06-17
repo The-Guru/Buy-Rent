@@ -8,7 +8,9 @@ The app uses several controls of SwiftUI:
 * TextField
 * Picker
 
-Also the app implements an Admob banner using UIViewControllerRepresentable.
-
+Also the app implements an Admob banner using UIViewControllerRepresentable.  
 Some screenshots of the app:
 
+![](https://github.com/The-Guru/Buy-Rent/blob/master/Buy-Rent1.png)
+![](https://github.com/The-Guru/Buy-Rent/blob/master/Buy-Rent2.png)
+![](https://github.com/The-Guru/Buy-Rent/blob/master/Buy-Rent3.png)
